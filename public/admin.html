@@ -12,6 +12,10 @@
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
+    
+    <!-- Mammoth JS for Docx extraction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    
     <style>
         /* Admin specific layout tweaks */
         body { background-color: var(--bg-base); }
@@ -128,7 +132,13 @@
                                     <input type="url" id="new-blog-image" placeholder="...or enter an Image URL" style="margin-top: 1rem;"/>
                                 </div>
                                 <div class="form-group">
-                                    <label>Report Content (HTML allowed)</label>
+                                    <label style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span>Report Content (HTML allowed)</span>
+                                        <div style="font-size: 0.85rem;">
+                                            <input type="file" id="docx-upload" accept=".docx" style="display: none;"/>
+                                            <button type="button" class="nav-btn" onclick="document.getElementById('docx-upload').click()" style="width: auto; padding: 0.2rem 0.6rem; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); font-size: 0.8rem;">📄 Import Word (.docx)</button>
+                                        </div>
+                                    </label>
                                     <textarea id="new-blog-content" rows="10" placeholder="Analyze the unseen..." required></textarea>
                                 </div>
                                 <div class="form-group" style="display: flex; gap: 1rem;">

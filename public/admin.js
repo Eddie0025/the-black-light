@@ -70,6 +70,33 @@ function initFileUploadListener() {
             label.innerText = fileName;
         });
     }
+
+    const docxInput = document.getElementById('docx-upload');
+    if (docxInput) {
+        docxInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            showToast("Extracting document...");
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const arrayBuffer = event.target.result;
+                mammoth.convertToHtml({arrayBuffer: arrayBuffer})
+                    .then(function(result) {
+                        const html = result.value;
+                        document.getElementById('new-blog-content').value = html;
+                        showToast("Word Document successfully converted to HTML!");
+                        docxInput.value = ''; // Reset input to allow re-upload
+                    })
+                    .catch(function(err) {
+                        console.error(err);
+                        showToast("Error extracting Word document.");
+                    });
+            };
+            reader.onerror = () => showToast("Error reading file.");
+            reader.readAsArrayBuffer(file);
+        });
+    }
 }
 
 /* ================== INTELLIGENCE HUB LOGIC ================== */
