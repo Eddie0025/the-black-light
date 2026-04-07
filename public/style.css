@@ -397,6 +397,34 @@ body.light-mode .blog-card {
     margin-bottom: 1.5rem;
 }
 
+.article-content a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: var(--transition-fast);
+}
+
+.article-content a:hover {
+    color: var(--accent-hover);
+}
+
+.article-content h1,
+.article-content h2,
+.article-content h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.article-content ul,
+.article-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.article-content li {
+    margin-bottom: 0.5rem;
+}
+
 /* Interaction Bar: Likes, Views, Toggles */
 .interaction-bar {
     display: flex;

@@ -76,26 +76,139 @@ function initFileUploadListener() {
         docxInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
+
+            const ext = file.name.split('.').pop().toLowerCase();
             
-            showToast("Extracting document...");
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const arrayBuffer = event.target.result;
-                mammoth.convertToHtml({arrayBuffer: arrayBuffer})
-                    .then(function(result) {
-                        const html = result.value;
-                        document.getElementById('new-blog-content').value = html;
-                        showToast("Word Document successfully converted to HTML!");
-                        docxInput.value = ''; // Reset input to allow re-upload
-                    })
-                    .catch(function(err) {
-                        console.error(err);
-                        showToast("Error extracting Word document.");
-                    });
-            };
-            reader.onerror = () => showToast("Error reading file.");
-            reader.readAsArrayBuffer(file);
+            if (ext === 'docx') {
+                handleDocxImport(file, docxInput);
+            } else if (ext === 'pdf') {
+                handlePdfImport(file, docxInput);
+            } else {
+                showToast("Unsupported file format. Please use .docx or .pdf");
+            }
         });
+    }
+}
+
+function handleDocxImport(file, inputEl) {
+    showToast("Extracting Word document...");
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const arrayBuffer = event.target.result;
+        
+        // Use mammoth with style mapping to preserve formatting
+        mammoth.convertToHtml({arrayBuffer: arrayBuffer}, {
+            styleMap: [
+                "p[style-name='Heading 1'] => h1:fresh",
+                "p[style-name='Heading 2'] => h2:fresh",
+                "p[style-name='Heading 3'] => h3:fresh",
+            ]
+        })
+        .then(function(result) {
+            let html = result.value;
+            
+            // Clean up empty paragraphs but preserve line breaks as spacing
+            html = html.replace(/<p><\/p>/g, '<br>');
+            
+            document.getElementById('new-blog-content').value = html;
+            showToast("Word Document imported successfully!");
+            inputEl.value = '';
+        })
+        .catch(function(err) {
+            console.error(err);
+            showToast("Error extracting Word document.");
+        });
+    };
+    reader.onerror = () => showToast("Error reading file.");
+    reader.readAsArrayBuffer(file);
+}
+
+async function handlePdfImport(file, inputEl) {
+    showToast("Extracting PDF document...");
+    try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+        
+        let fullHtml = '';
+        
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+            const page = await pdf.getPage(pageNum);
+            const textContent = await page.getTextContent();
+            
+            // Get link annotations for this page
+            const annotations = await page.getAnnotations();
+            const linkAnnotations = annotations.filter(a => a.subtype === 'Link' && a.url);
+            
+            // Build lines from text items, preserving structure
+            let currentLine = '';
+            let lastY = null;
+            const lines = [];
+            
+            textContent.items.forEach(item => {
+                const y = Math.round(item.transform[5]);
+                
+                if (lastY !== null && Math.abs(y - lastY) > 5) {
+                    // New line detected
+                    if (currentLine.trim()) {
+                        lines.push(currentLine.trim());
+                    } else {
+                        lines.push(''); // Preserve blank lines
+                    }
+                    currentLine = '';
+                }
+                
+                // Check if this text item falls within a link annotation
+                let text = item.str;
+                const itemX = item.transform[4];
+                const itemY = item.transform[5];
+                
+                for (const annot of linkAnnotations) {
+                    const rect = annot.rect; // [x1, y1, x2, y2]
+                    if (itemX >= rect[0] - 2 && itemX <= rect[2] + 2 &&
+                        itemY >= rect[1] - 2 && itemY <= rect[3] + 2) {
+                        text = `<a href="${annot.url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+                        break;
+                    }
+                }
+                
+                currentLine += text;
+                lastY = y;
+            });
+            
+            if (currentLine.trim()) {
+                lines.push(currentLine.trim());
+            }
+            
+            // Convert lines to paragraphs, grouping consecutive non-empty lines
+            let paragraph = '';
+            lines.forEach(line => {
+                if (line === '') {
+                    if (paragraph) {
+                        fullHtml += `<p>${paragraph}</p>\n`;
+                        paragraph = '';
+                    }
+                    fullHtml += '<br>\n';
+                } else {
+                    if (paragraph) paragraph += ' ';
+                    paragraph += line;
+                }
+            });
+            if (paragraph) {
+                fullHtml += `<p>${paragraph}</p>\n`;
+            }
+            
+            // Add page separator for multi-page PDFs
+            if (pageNum < pdf.numPages) {
+                fullHtml += '<br>\n';
+            }
+        }
+        
+        document.getElementById('new-blog-content').value = fullHtml.trim();
+        showToast(`PDF imported successfully! (${pdf.numPages} page${pdf.numPages > 1 ? 's' : ''} extracted)`);
+        inputEl.value = '';
+    } catch (err) {
+        console.error(err);
+        showToast("Error extracting PDF: " + err.message);
     }
 }
 
