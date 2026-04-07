@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligence Hub | The Black Light</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <style>
+        /* Admin specific layout tweaks */
+        body { background-color: var(--bg-base); }
+    </style>
+</head>
+<body>
+
+    <!-- App Container -->
+    <main class="app-container" style="margin-top: 4rem; max-width: 1400px; padding: 0 4rem;">
+        
+        <!-- LOGIN VIEW -->
+        <section id="login-view" class="view active admin-layout">
+            <div class="admin-panel animate-scale" style="text-align: center;">
+                <img src="black_light_logo.png" alt="Logo" style="height: 60px; margin-bottom: 1.5rem; border-radius: 8px;">
+                <h2>Vault Access</h2>
+                <p>Authenticate to enter the command center.</p>
+                <form id="login-form">
+                    <input type="text" id="admin-user" placeholder="Username" required autocomplete="username"/>
+                    <input type="password" id="admin-pass" placeholder="Password" required autocomplete="current-password"/>
+                    <button type="submit" class="submit-btn box-glow w-full">Enter Vault</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- DASHBOARD VIEW -->
+        <section id="dashboard-view" class="view admin-layout" style="display: none;">
+            <div class="admin-panel wide animate-scale">
+                
+                <div class="dashboard-container">
+                    <!-- Sidebar -->
+                    <aside class="dashboard-sidebar">
+                        <div class="logo-area" style="margin-bottom: 2rem; padding-left: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <img src="black_light_logo.png" alt="Logo" style="height: 30px; border-radius: 4px;">
+                            <div class="logo" style="font-size: 1.2rem;">tbl.hub</div>
+                        </div>
+                        <button class="sidebar-btn active" onclick="switchTab('analytics')">📈 Analytics</button>
+                        <button class="sidebar-btn" onclick="switchTab('publish')">✍️ Publish</button>
+                        <button class="sidebar-btn" onclick="switchTab('articles')">📰 Articles</button>
+                        <button class="sidebar-btn" onclick="switchTab('archive')">🗄️ Vault (Archive)</button>
+                        <button class="sidebar-btn" onclick="switchTab('comments')">💬 Comments</button>
+                        <button class="sidebar-btn" onclick="switchTab('subscribers')">👥 Subscribers</button>
+                        
+                        <div style="margin-top: auto; padding: 1rem;">
+                            <button class="logout-btn" onclick="handleLogout()" style="width: 100%; text-align: left; background: transparent;">🚪 Logout</button>
+                        </div>
+                    </aside>
+
+                    <!-- Main Dashboard Area -->
+                    <div class="dashboard-main">
+                        
+                        <!-- TAB: Analytics -->
+                        <div id="tab-analytics" class="tab-content">
+                            <h2 style="text-align: left; margin-bottom: 2rem;">Intelligence Overview</h2>
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <h4>Total Intelligence Views</h4>
+                                    <div class="value" id="stat-views">0</div>
+                                </div>
+                                <div class="stat-card">
+                                    <h4>Engagement Rate</h4>
+                                    <div class="value" id="stat-engagement">0%</div>
+                                </div>
+                                <div class="stat-card">
+                                    <h4>Total Subscribers</h4>
+                                    <div class="value" id="stat-subs">0</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Traffic Activity Chart -->
+                            <div style="background: rgba(var(--accent-rgb), 0.05); border: 1px solid rgba(255,255,255,0.05); padding: 2rem; border-radius: var(--radius-md); text-align: center;">
+                                <h4 style="color: var(--text-secondary); margin-bottom: 2rem;">Traffic Activity (Last 7 Days)</h4>
+                                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                    <div id="traffic-chart" style="height: 180px; display: flex; align-items: flex-end; gap: 1.5rem; justify-content: center;">
+                                        <!-- Bars injected via JS -->
+                                    </div>
+                                    <div style="display: flex; gap: 1.5rem; justify-content: center; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05);">
+                                        <span style="width: 30px; font-size: 0.7rem; color: var(--text-secondary);">S</span>
+                                        <span style="width: 30px; font-size: 0.7rem; color: var(--text-secondary);">M</span>
+                                        <span style="width: 30px; font-size: 0.7rem; color: var(--text-secondary);">T</span>
+                                        <span style="width: 30px; font-size: 0.7rem; color: var(--text-secondary);">W</span>
+                                        <span style="width: 30px; font-size: 0.7rem; color: var(--text-secondary);">T</span>
+                                        <span style="width: 30px; font-size: 0.7rem; color: var(--text-secondary);">F</span>
+                                        <span style="width: 30px; font-size: 0.7rem; color: var(--text-secondary);">S</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Publish -->
+                        <div id="tab-publish" class="tab-content" style="display: none;">
+                            <h2 style="text-align: left; margin-bottom: 2rem;">New Intelligence</h2>
+                            <form id="upload-form">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input type="text" id="new-blog-title" placeholder="e.g. The Energy Paradox" required/>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div class="form-group">
+                                        <label>Category</label>
+                                        <input type="text" id="new-blog-category" placeholder="e.g. Energy" required/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Author / Source</label>
+                                        <input type="text" id="new-blog-author" placeholder="Black Light Internal" required/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Cover Image</label>
+                                    <div style="display: flex; gap: 1rem; align-items: center;">
+                                        <input type="file" id="new-blog-file" accept="image/*" style="display: none;"/>
+                                        <button type="button" class="nav-btn" onclick="document.getElementById('new-blog-file').click()" style="width: auto;">📁 Choose from Device</button>
+                                        <span id="file-name-label" style="font-size: 0.85rem; color: var(--text-secondary);">No file chosen</span>
+                                    </div>
+                                    <input type="url" id="new-blog-image" placeholder="...or enter an Image URL" style="margin-top: 1rem;"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Report Content (HTML allowed)</label>
+                                    <textarea id="new-blog-content" rows="10" placeholder="Analyze the unseen..." required></textarea>
+                                </div>
+                                <div class="form-group" style="display: flex; gap: 1rem;">
+                                    <button type="submit" class="submit-btn box-glow" id="publish-btn" style="flex-grow: 1;">Publish to Intelligence Feed</button>
+                                    <button type="button" id="cancel-edit-btn" class="nav-btn" style="display: none; width: auto;" onclick="cancelEditing()">Cancel Edit Mode</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- TAB: Articles -->
+                        <div id="tab-articles" class="tab-content" style="display: none;">
+                            <h2 style="text-align: left; margin-bottom: 2rem;">Manage Reports</h2>
+                            <div class="admin-table-container">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Category</th>
+                                            <th>Engagement</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <ul id="admin-articles-list" style="display: contents;">
+                                        <!-- Injected via JS -->
+                                    </ul>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Archive -->
+                        <div id="tab-archive" class="tab-content" style="display: none;">
+                            <h2 style="text-align: left; margin-bottom: 2rem;">Security Vault</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Archived reports are hidden from the public feed but preserved here.</p>
+                            <div class="articles-table-wrapper">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-archive-list">
+                                        <!-- Archived blogs injected here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Comments -->
+                        <div id="tab-comments" class="tab-content" style="display: none;">
+                            <h2 style="text-align: left; margin-bottom: 2rem;">Intelligence Engagements</h2>
+                            <div class="admin-table-container">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Author</th>
+                                            <th>Comment</th>
+                                            <th>Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <ul id="admin-comments-list" style="display: contents;">
+                                        <!-- Injected via JS -->
+                                    </ul>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Subscribers -->
+                        <div id="tab-subscribers" class="tab-content" style="display: none;">
+                            <h2 style="text-align: left; margin-bottom: 2rem;">Subscriber Network</h2>
+                            <div class="admin-table-container">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Email Address</th>
+                                            <th>Joined Date</th>
+                                        </tr>
+                                    </thead>
+                                    <ul id="admin-subs-list" style="display: contents;">
+                                        <!-- Injected via JS -->
+                                    </ul>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
