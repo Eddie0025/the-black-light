@@ -1,4 +1,4 @@
-const ADMIN_USER = 'eddie0025';
+const ADMIN_USER = 'eddie';
 const ADMIN_PASS = 'randhawaeddie0025';
 const SESSION_KEY = 'blacklight_admin_session';
 

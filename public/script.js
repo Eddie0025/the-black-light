@@ -87,27 +87,50 @@ function navigateTo(viewId) {
 
 // ---- Data Fetching ----
 
-async function fetchBlogs() {
+async function fetchBlogs(category = null) {
     try {
-        // Only fetch non-archived articles for the main feed
-        const { data: blogs, error } = await supabase
-            .from('blogs')
-            .select('*')
-            .eq('is_archived', false)
-            .order('id', { ascending: false });
+        let query = supabase.from('blogs').select('*').eq('is_archived', false).order('id', { ascending: false });
+        if (category) {
+            query = query.ilike('category', category);
+        }
+        
+        const { data: blogs, error } = await query;
             
         if (error) throw error;
         allBlogs = blogs;
         currentPage = 1; 
+        
+        const heroTitle = document.querySelector('.hero h2');
+        if (heroTitle) {
+            heroTitle.innerText = category ? category + ' Intelligence' : 'Illuminating the unseen.';
+        }
+        
         renderHomeFeed();
     } catch (e) {
-        // Silent catch for production
+        console.error(e);
     }
+}
+
+function loadCategory(category) {
+    navigateTo('home');
+    fetchBlogs(category);
+}
+
+function loadHome() {
+    navigateTo('home');
+    fetchBlogs(null);
 }
 
 function renderHomeFeed() {
     const grid = document.getElementById('blog-grid');
     grid.innerHTML = '';
+    
+    if (allBlogs.length === 0) {
+        grid.innerHTML = '<p style="text-align:center; color:var(--text-secondary); width:100%; margin: 3rem 0; font-size: 1.2rem;">No articles found for this category yet.</p>';
+        const controls = document.getElementById('pagination-controls');
+        if (controls) controls.innerHTML = '';
+        return;
+    }
     
     // Pagination Slicing
     const start = (currentPage - 1) * pageSize;

@@ -28,7 +28,7 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo-wrapper" onclick="navigateTo('home')" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+            <div class="logo-wrapper" onclick="loadHome()" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
                 <img src="black_light_logo.png" alt="Logo" style="height: 35px; border-radius: 6px;">
                 <h1 class="logo">The Black <span class="brand-accent">Light</span><span class="dot">.</span></h1>
             </div>
@@ -36,7 +36,7 @@
                 <button class="nav-btn theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode">
                     <span class="icon">🌓</span>
                 </button>
-                <button class="nav-btn" onclick="navigateTo('home')">Home</button>
+                <button class="nav-btn" onclick="loadHome()">Home</button>
                 <!-- Removed login/subscribe buttons; moved to footer -->
             </div>
         </div>
@@ -138,10 +138,10 @@
             <div class="footer-column">
                 <h3>Categories</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Global Markets</a></li>
-                    <li><a href="#">Energy</a></li>
-                    <li><a href="#">Economics</a></li>
-                    <li><a href="#">Policy</a></li>
+                    <li><a href="#" onclick="event.preventDefault(); loadCategory('Global Markets')">Global Markets</a></li>
+                    <li><a href="#" onclick="event.preventDefault(); loadCategory('Energy')">Energy</a></li>
+                    <li><a href="#" onclick="event.preventDefault(); loadCategory('Economics')">Economics</a></li>
+                    <li><a href="#" onclick="event.preventDefault(); loadCategory('Policy')">Policy</a></li>
                 </ul>
             </div>
             <div class="footer-column newsletter-col">
