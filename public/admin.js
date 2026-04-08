@@ -314,7 +314,8 @@ function renderTrafficChart(stats) {
     for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
-        const dateStr = d.toISOString().split('T')[0];
+        // Ensure local timezone formatting for the date string comparison
+        const dateStr = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
         const stat = stats.find(s => s.view_date === dateStr);
         dataPoints.push({
             views: stat ? stat.views : 0,
@@ -326,14 +327,27 @@ function renderTrafficChart(stats) {
     const maxViews = Math.max(...dataPoints.map(d => d.views), 10);
     
     dataPoints.forEach(pt => {
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'column';
+        wrapper.style.justifyContent = 'flex-end';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.height = '100%';
+        wrapper.style.gap = '5px';
+        
+        const textLabel = document.createElement('span');
+        textLabel.innerText = pt.views;
+        textLabel.style.fontSize = '0.8rem';
+        textLabel.style.fontWeight = '600';
+        textLabel.style.color = pt.isToday ? 'var(--accent)' : 'var(--text-secondary)';
+
         const height = (pt.views / maxViews) * 100;
         const bar = document.createElement('div');
         bar.style.width = '30px';
-        bar.style.height = `${Math.max(height, 5)}%`;
+        bar.style.height = `${Math.max(height, 4)}%`; // Provide a minimum height so it's always visible
         bar.style.background = 'var(--accent)';
         bar.style.borderRadius = '4px 4px 0 0';
         bar.style.transition = 'height 1s ease-out';
-        bar.style.position = 'relative';
         bar.title = `${pt.views} Views`;
         
         if (!pt.isToday) {
@@ -342,7 +356,9 @@ function renderTrafficChart(stats) {
             bar.style.boxShadow = '0 0 20px var(--accent-glow)';
         }
         
-        chart.appendChild(bar);
+        wrapper.appendChild(textLabel);
+        wrapper.appendChild(bar);
+        chart.appendChild(wrapper);
     });
 }
 
