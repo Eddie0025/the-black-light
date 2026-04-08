@@ -41,9 +41,42 @@ window.addEventListener('scroll', () => {
 document.addEventListener("DOMContentLoaded", () => {
     initTheme();
     renderSkeletons();
-    fetchBlogs();
+    
+    // Process URL parameters for deep-linking
+    const urlParams = new URLSearchParams(window.location.search);
+    const articleId = urlParams.get('id');
+    const viewParam = urlParams.get('view');
+    
+    if (articleId) {
+        fetchArticle(articleId, false); // Fetch but don't push history (initial state)
+    } else if (viewParam) {
+        navigateTo(viewParam, false);
+    } else {
+        // Default initial state
+        history.replaceState({ view: 'home' }, '', window.location.pathname);
+        fetchBlogs();
+    }
+    
     trackView(); 
 });
+
+window.onpopstate = function(event) {
+    if (event.state) {
+        const { view, id, category } = event.state;
+        if (view === 'article' && id) {
+            fetchArticle(id, false);
+        } else if (view === 'home') {
+            navigateTo('home', false);
+            fetchBlogs(category || null);
+        } else {
+            navigateTo(view, false);
+        }
+    } else {
+        // Fallback to home if no state
+        navigateTo('home', false);
+        fetchBlogs();
+    }
+};
 
 async function trackView() {
     try {
@@ -79,10 +112,30 @@ function renderSkeletons() {
     }
 }
 
-function navigateTo(viewId) {
+function navigateTo(viewId, pushHistory = true, extraData = {}) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(`${viewId}-view`).classList.add('active');
+    
+    const targetView = document.getElementById(`${viewId}-view`);
+    if (targetView) targetView.classList.add('active');
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (pushHistory) {
+        let url = window.location.pathname;
+        if (viewId === 'article' && extraData.id) {
+            url += `?id=${extraData.id}`;
+        } else if (viewId !== 'home') {
+            url += `?view=${viewId}`;
+        } else if (extraData.category) {
+            url += `?category=${encodeURIComponent(extraData.category)}`;
+        }
+        
+        history.pushState({ 
+            view: viewId, 
+            id: extraData.id || null, 
+            category: extraData.category || null 
+        }, '', url);
+    }
 }
 
 // ---- Data Fetching ----
@@ -112,7 +165,7 @@ async function fetchBlogs(category = null) {
 }
 
 function loadCategory(category) {
-    navigateTo('home');
+    navigateTo('home', true, { category });
     fetchBlogs(category);
 }
 
@@ -141,7 +194,7 @@ function renderHomeFeed() {
         const card = document.createElement('div');
         card.className = 'blog-card reveal';
         card.style.transitionDelay = `${index * 0.1}s`;
-        card.onclick = () => openArticle(post.id);
+        card.onclick = () => fetchArticle(post.id);
         
         card.innerHTML = `
             <div class="card-img" style="background-image: url('${post.cover_image}')"></div>
@@ -182,7 +235,7 @@ function changePage(delta) {
     renderHomeFeed();
 }
 
-async function openArticle(id) {
+async function fetchArticle(id, pushHistory = true) {
     try {
         const { data: post, error } = await supabase
             .from('blogs')
@@ -236,7 +289,7 @@ async function openArticle(id) {
             window.location.href
         );
         
-        navigateTo('article');
+        navigateTo('article', pushHistory, { id: post.id });
         trackView(); 
     } catch (e) {
         console.error("Failed to fetch article", e);

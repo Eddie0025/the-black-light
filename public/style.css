@@ -1223,4 +1223,53 @@ body.light-mode input, body.light-mode textarea, body.light-mode .blog-card, bod
 .wa-btn:hover { color: #25D366; }
 .li-btn:hover { color: #0077B5; }
 .x-btn:hover { color: #fff; }
-.copy-btn:hover { color: var(--accent); }
+
+/* ================== RESPONSIVE DESIGN FOR ADMIN ================== */
+@media (max-width: 900px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .dashboard-sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        -webkit-overflow-scrolling: touch;
+        gap: 1rem;
+    }
+
+    .sidebar-btn {
+        white-space: nowrap;
+        width: auto;
+        padding: 0.8rem 1.25rem;
+        font-size: 0.9rem;
+    }
+
+    .dashboard-main {
+        padding: 1.5rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Article Tables - hide less critical columns */
+    .admin-table th:nth-child(2), 
+    .admin-table td:nth-child(2),
+    .admin-table th:nth-child(3), 
+    .admin-table td:nth-child(3) {
+        display: none;
+    }
+
+    .admin-panel {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .logo-area { display: none; }
+}
