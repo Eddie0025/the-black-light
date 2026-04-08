@@ -629,6 +629,9 @@ body.light-mode .blog-card {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    position: sticky;
+    top: 2rem;
+    height: calc(100vh - 4rem);
 }
 
 .sidebar-btn {
