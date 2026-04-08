@@ -379,13 +379,13 @@ async function fetchHubArticles() {
         blogs.forEach(b => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><strong>${b.title}</strong></td>
+                <td style="min-width: 200px;"><strong>${b.title}</strong></td>
                 <td><span class="status-badge">${b.category}</span></td>
-                <td>👍 ${b.likes} | 👎 ${b.dislikes}</td>
-                <td style="display: flex; gap: 0.5rem;">
-                    <button class="status-badge" style="background: rgba(var(--accent-rgb), 0.1); border: 1px solid var(--accent); cursor: pointer;" onclick="editHubArticle(${b.id})">Edit</button>
+                <td style="white-space: nowrap;">👍 ${b.likes} | 👎 ${b.dislikes}</td>
+                <td style="display: flex; gap: 0.5rem; flex-wrap: nowrap; align-items: center; white-space: nowrap;">
+                    <button class="status-badge" style="background: rgba(124, 58, 237, 0.1); border: 1px solid var(--accent); cursor: pointer;" onclick="editHubArticle(${b.id})">Edit</button>
                     <button class="status-badge" style="background: rgba(255,255,255,0.05); color: #888; border: 1px solid #444; cursor: pointer;" onclick="archiveHubArticle(${b.id})">Archive</button>
-                    <button class="delete-action" onclick="deleteHubArticle(${b.id})">Delete</button>
+                    <button class="delete-action" onclick="deleteHubArticle(${b.id})" style="border: none;">Delete</button>
                 </td>
             `;
             list.appendChild(row);
@@ -412,10 +412,10 @@ async function fetchArchivedArticles() {
         blogs.forEach(b => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><strong>${b.title}</strong></td>
-                <td style="display: flex; gap: 0.5rem;">
-                    <button class="status-badge" style="background: var(--accent); color: white; cursor: pointer;" onclick="reviveHubArticle(${b.id})">Revive</button>
-                    <button class="delete-action" onclick="deleteHubArticle(${b.id})">Delete Permanently</button>
+                <td style="min-width: 200px;"><strong>${b.title}</strong></td>
+                <td style="display: flex; gap: 0.5rem; flex-wrap: nowrap; align-items: center; white-space: nowrap;">
+                    <button class="status-badge" style="background: var(--accent); color: white; border: none; cursor: pointer;" onclick="reviveHubArticle(${b.id})">Revive</button>
+                    <button class="delete-action" onclick="deleteHubArticle(${b.id})" style="border: none;">Delete Permanently</button>
                 </td>
             `;
             list.appendChild(row);
