@@ -30,40 +30,43 @@ export default async function handler(req, res) {
       return res.status(200).json({ message: 'No subscribers to notify' });
     }
 
-    const recipientEmails = subscribers.map(s => s.email);
-    const reportUrl = `https://theblacklight.blog/?id=${id}`;
+    // 2. Blast the intelligence alert (Individual sends for privacy and unsubscribe links)
+    const results = await Promise.all(subscribers.map(sub => 
+      resend.emails.send({
+        from: 'The Black Light <briefings@theblacklight.blog>',
+        to: [sub.email],
+        reply_to: 'theblacklighttt@gmail.com',
+        subject: `BRIEFING: ${title} | The Black Light`,
+        html: `
+          <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #08080a; color: #fcfcfc; padding: 60px 40px; border-radius: 4px; max-width: 600px; margin: 0 auto; border: 1px solid #1a1a20;">
+            <div style="margin-bottom: 48px; border-bottom: 2px solid #c084fc; width: 40px;"></div>
+            
+            <h1 style="color: #fcfcfc; font-size: 32px; line-height: 1.15; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.03em;">${title}</h1>
+            
+            <div style="margin-bottom: 32px; display: flex; gap: 12px; align-items: center;">
+              <span style="color: #c084fc; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;">${category || 'Analytical Intelligence'}</span>
+            </div>
 
-    // 2. Blast the intelligence alert
-    const data = await resend.emails.send({
-      from: 'The Black Light <briefings@theblacklight.blog>',
-      to: recipientEmails,
-      reply_to: 'theblacklighttt@gmail.com',
-      subject: `BRIEFING: ${title} | The Black Light`,
-      html: `
-        <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #08080a; color: #fcfcfc; padding: 60px 40px; border-radius: 4px; max-width: 600px; margin: 0 auto; border: 1px solid #1a1a20;">
-          <div style="margin-bottom: 48px; border-bottom: 2px solid #c084fc; width: 40px;"></div>
-          
-          <h1 style="color: #fcfcfc; font-size: 32px; line-height: 1.15; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.03em;">${title}</h1>
-          
-          <div style="margin-bottom: 32px; display: flex; gap: 12px; align-items: center;">
-            <span style="color: #c084fc; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;">${category || 'Analytical Intelligence'}</span>
+            <p style="color: #94a3b8; font-size: 16px; line-height: 1.7; margin-bottom: 40px;">
+              Our latest analytical briefing has been finalized. We provide deep-dive insights and strategic projections on the evolving situation in the <strong>${category || 'General'}</strong> sector.
+            </p>
+            
+            <a href="${reportUrl}" style="display: inline-block; background-color: #ffffff; color: #000000; padding: 16px 40px; border-radius: 2px; text-decoration: none; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">Access Full Briefing</a>
+            
+            <div style="margin-top: 80px; padding-top: 32px; border-top: 1px solid #1a1a20; color: #475569; font-size: 11px; line-height: 1.8; letter-spacing: 0.02em;">
+              <p style="margin-bottom: 12px;">This document is intended for the registered recipient. Confidentiality and strategic discretion are advised.</p>
+              <p style="margin-bottom: 12px; text-transform: uppercase;">&copy; 2026 The Black Light | Global Strategy & Macro Analysis</p>
+              <p style="margin: 0;">
+                <a href="https://theblacklight.blog/unsubscribe.html?email=${encodeURIComponent(sub.email)}" style="color: #64748b; text-decoration: underline;">Unsubscribe from network</a>
+              </p>
+            </div>
           </div>
+        `,
+      })
+    ));
 
-          <p style="color: #94a3b8; font-size: 16px; line-height: 1.7; margin-bottom: 40px;">
-            Our latest analytical briefing has been finalized. We provide deep-dive insights and strategic projections on the evolving situation in the <strong>${category || 'General'}</strong> sector.
-          </p>
-          
-          <a href="${reportUrl}" style="display: inline-block; background-color: #ffffff; color: #000000; padding: 16px 40px; border-radius: 2px; text-decoration: none; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">Access Full Briefing</a>
-          
-          <div style="margin-top: 80px; padding-top: 32px; border-top: 1px solid #1a1a20; color: #475569; font-size: 11px; line-height: 1.8; letter-spacing: 0.02em;">
-            <p style="margin-bottom: 12px;">This document is intended for the registered recipient. Confidentiality and strategic discretion are advised.</p>
-            <p style="margin: 0; text-transform: uppercase;">&copy; 2026 The Black Light | Global Strategy & Macro Analysis</p>
-          </div>
-        </div>
-      `,
-    });
+    return res.status(200).json({ success: true, count: results.length });
 
-    return res.status(200).json({ success: true, data });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: error.message });

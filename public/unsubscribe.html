@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unsubscribe | The Black Light</title>
+    <link rel="icon" type="image/png" href="black_light_logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: var(--bg-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .unsubscribe-card {
+            background: rgba(var(--accent-rgb), 0.05);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 3rem;
+            border-radius: var(--radius-md);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .unsubscribe-card h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--text-base);
+        }
+        .unsubscribe-card p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .email-display {
+            background: rgba(255,255,255,0.03);
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="unsubscribe-card">
+        <img src="black_light_logo.png" alt="Logo" style="height: 50px; margin-bottom: 2rem; border-radius: 8px;">
+        <div id="initial-state">
+            <h1>Unsubscribe Request</h1>
+            <p>We are sorry to see you go. Confirming unsubscription for:</p>
+            <div id="email-preview" class="email-display">Loading email...</div>
+            <button id="unsub-btn" class="submit-btn box-glow w-full" style="margin-top: 1rem;">Confirm Unsubscription</button>
+            <p style="margin-top: 2rem; font-size: 0.8rem;"><a href="/" style="color: var(--accent); text-decoration: none;">Return to Home</a></p>
+        </div>
+        <div id="success-state" style="display: none;">
+            <h1 style="color: var(--accent);">Successfully Unsubscribed.</h1>
+            <p>Your email has been removed from our strategic distribution network. You will no longer receive briefings.</p>
+            <button onclick="window.location.href='/'" class="nav-btn" style="width: auto; margin-top: 1rem;">Return to Feed</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const email = params.get('email');
+            const preview = document.getElementById('email-preview');
+            const unsubBtn = document.getElementById('unsub-btn');
+
+            if (!email) {
+                preview.innerText = "No email provided";
+                unsubBtn.disabled = true;
+                unsubBtn.style.opacity = '0.5';
+                return;
+            }
+
+            preview.innerText = email;
+
+            unsubBtn.addEventListener('click', async () => {
+                unsubBtn.disabled = true;
+                unsubBtn.innerText = "Processing...";
+
+                try {
+                    const response = await fetch('/api/unsubscribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+
+                    if (response.ok) {
+                        document.getElementById('initial-state').style.display = 'none';
+                        document.getElementById('success-state').style.display = 'block';
+                    } else {
+                        throw new Error("Failed to unsubscribe");
+                    }
+                } catch (e) {
+                    alert("Error processing request. Please try again or contact support.");
+                    unsubBtn.disabled = false;
+                    unsubBtn.innerText = "Confirm Unsubscription";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

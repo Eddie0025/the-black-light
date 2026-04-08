@@ -486,6 +486,7 @@ async function fetchHubSubscribers() {
             row.innerHTML = `
                 <td>${s.email}</td>
                 <td>${date}</td>
+                <td><button class="delete-action" onclick="deleteHubSubscriber(${s.id})">Delete</button></td>
             `;
             list.appendChild(row);
         });
@@ -603,6 +604,19 @@ async function deleteHubComment(id) {
         showToast("Delete failed: " + e.message);
     }
 }
+
+async function deleteHubSubscriber(id) {
+    if (!confirm("Remove this subscriber from the network?")) return;
+    try {
+        const { error } = await supabase.from('subscribers').delete().eq('id', id);
+        if (error) throw error;
+        showToast("Subscriber removed");
+        fetchHubSubscribers();
+    } catch (e) {
+        showToast("Action failed: " + e.message);
+    }
+}
+
 
 /* ================== PUBLISH / UPDATE LOGIC ================== */
 

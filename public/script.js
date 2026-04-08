@@ -409,9 +409,29 @@ async function submitComment(e) {
 
 async function handleSubscribe(e) {
     e.preventDefault();
-    const email = document.getElementById('sub-email').value;
+    const emailInput = document.getElementById('sub-email');
+    const submitBtn = e.target.querySelector('button');
+    const email = emailInput.value;
     
+    // Disable UI during validation
+    submitBtn.disabled = true;
+    const originalBtnText = submitBtn.innerText;
+    submitBtn.innerText = "Authenticating...";
+
     try {
+        // 1. Internal Validation API Call
+        const valResponse = await fetch('/api/validate-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+
+        if (!valResponse.ok) {
+            const errorData = await valResponse.json();
+            throw new Error(errorData.error || "Intelligence verification failed.");
+        }
+
+        // 2. Supabase Insertion
         const { error } = await supabase
             .from('subscribers')
             .insert([{ email: email }]);
@@ -423,13 +443,17 @@ async function handleSubscribe(e) {
                 throw error;
             }
         } else {
-            document.getElementById('sub-email').value = '';
+            emailInput.value = '';
             showToast("Successfully subscribed!");
         }
     } catch(e) {
-        showToast("Error subscribing. Please try again.");
+        showToast(e.message || "Error subscribing. Please try again.");
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalBtnText;
     }
 }
+
 
 function showToast(message) {
     const container = document.getElementById('toast-container');
