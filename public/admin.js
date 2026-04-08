@@ -1,11 +1,8 @@
-const ADMIN_USER = 'eddie';
-const ADMIN_PASS = 'randhawaeddie0025';
-const SESSION_KEY = 'blacklight_admin_session';
-
 let editingBlogId = null;
+let authReady = false;
 
 document.addEventListener("DOMContentLoaded", () => {
-    checkLocalSession();
+    initializeAdminAuth();
     initFileUploadListener();
 });
 
@@ -32,33 +29,78 @@ function showView(viewId) {
     }
 }
 
-function checkLocalSession() {
-    const session = localStorage.getItem(SESSION_KEY);
-    if (session === ADMIN_USER) {
+async function initializeAdminAuth() {
+    try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+
+        authReady = true;
+        updateAuthView(data.session);
+
+        supabase.auth.onAuthStateChange((_event, session) => {
+            authReady = true;
+            updateAuthView(session);
+        });
+    } catch (error) {
+        console.error(error);
+        showToast("Unable to verify admin session");
+        showView('login');
+    }
+}
+
+function updateAuthView(session) {
+    if (session) {
         showView('dashboard');
     } else {
         showView('login');
     }
 }
 
-document.getElementById('login-form').addEventListener('submit', (e) => {
+document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const user = document.getElementById('admin-user').value;
-    const pass = document.getElementById('admin-pass').value;
-    
-    if (user === ADMIN_USER && pass === ADMIN_PASS) {
-        localStorage.setItem(SESSION_KEY, ADMIN_USER);
+
+    if (!authReady) {
+        showToast("Checking authentication status...");
+        return;
+    }
+
+    const email = document.getElementById('admin-user').value.trim();
+    const password = document.getElementById('admin-pass').value;
+    const submitButton = e.currentTarget.querySelector('button[type="submit"]');
+
+    submitButton.disabled = true;
+    submitButton.innerText = "Authenticating...";
+
+    try {
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (error) throw error;
+
         showToast("Authenticated successfully");
         showView('dashboard');
-    } else {
-        showToast("Invalid credentials");
+        e.currentTarget.reset();
+    } catch (error) {
+        console.error(error);
+        showToast(error.message || "Invalid credentials");
+    } finally {
+        submitButton.disabled = false;
+        submitButton.innerText = "Enter Vault";
     }
 });
 
-function handleLogout() {
-    localStorage.removeItem(SESSION_KEY);
-    showView('login');
-    showToast("Logged out");
+async function handleLogout() {
+    try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        showToast("Logged out");
+        showView('login');
+    } catch (error) {
+        console.error(error);
+        showToast("Logout failed");
+    }
 }
 
 function initFileUploadListener() {
