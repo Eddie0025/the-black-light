@@ -16,20 +16,27 @@ export default async function handler(req, res) {
 
   try {
     const data = await resend.emails.send({
-      from: 'Intel Hub <intel@theblacklight.blog>',
+      from: 'The Black Light <briefings@theblacklight.blog>',
       to: [email],
       reply_to: 'theblacklighttt@gmail.com',
-      subject: 'Operational Access Granted | The Black Light',
+      subject: 'Subscription Confirmed | The Black Light',
       html: `
-        <div style="font-family: sans-serif; background-color: #08080a; color: #fcfcfc; padding: 40px; border-radius: 10px;">
-          <h1 style="color: #c084fc; border-bottom: 1px solid #1a1a20; padding-bottom: 10px;">Operational Access Granted</h1>
-          <p style="font-size: 1.1rem; line-height: 1.6;">Welcome to the network.</p>
-          <p style="color: #94a3b8;">Your subscription to <strong>The Black Light</strong> intelligence reports has been successfully authenticated. You are now cleared to receive high-level briefings on global macroeconomics and market intelligence.</p>
-          <div style="margin-top: 30px; padding: 20px; background: #111115; border-radius: 8px; border: 1px solid #1a1a20;">
-            <p style="margin: 0; color: #c084fc; font-weight: bold;">Security Protocol:</p>
-            <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #94a3b8;">Expect regular updates as global patterns shift. All communications are intended for the recipient only.</p>
+        <div style="font-family: 'Inter', system-ui, sans-serif; background-color: #08080a; color: #fcfcfc; padding: 60px 40px; border-radius: 4px; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #fcfcfc; font-size: 24px; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.02em;">Welcome to The Black Light.</h1>
+          <p style="font-size: 16px; line-height: 1.6; color: #94a3b8; margin-bottom: 32px;">
+            Thank you for joining our community. Your subscription has been successfully processed. 
+          </p>
+          <div style="background: #111115; padding: 32px; border-left: 2px solid #c084fc; margin-bottom: 32px;">
+            <p style="margin: 0; color: #fcfcfc; font-size: 15px; line-height: 1.6;">
+              You will now receive regular briefings on global macroeconomics, energy markets, and international policy. Our goal is to provide deep-dive analysis that cuts through the noise of traditional media.
+            </p>
           </div>
-          <p style="margin-top: 40px; font-size: 0.8rem; color: #555;">&copy; 2026 The Black Light | Intelligence Division</p>
+          <p style="font-size: 14px; line-height: 1.6; color: #64748b;">
+            All reports are distributed directly to your inbox as they are published. You can also access our full archive at any time through our digital platform.
+          </p>
+          <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #1a1a20;">
+            <p style="font-size: 12px; color: #475569; margin: 0;">&copy; 2026 The Black Light | Analytical Intelligence & Strategy</p>
+          </div>
         </div>
       `,
     });

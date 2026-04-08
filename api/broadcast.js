@@ -35,23 +35,26 @@ export default async function handler(req, res) {
 
     // 2. Blast the intelligence alert
     const data = await resend.emails.send({
-      from: 'Intel Alert <intel@theblacklight.blog>',
+      from: 'The Black Light <briefings@theblacklight.blog>',
       to: recipientEmails,
       reply_to: 'theblacklighttt@gmail.com',
-      subject: `ALERT: ${title} | New Intelligence Log`,
+      subject: `BRIEFING: ${title} | The Black Light`,
       html: `
-        <div style="font-family: sans-serif; background-color: #08080a; color: #fcfcfc; padding: 40px; border-radius: 10px;">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-            <span style="background: rgba(192, 132, 252, 0.1); color: #c084fc; padding: 4px 10px; border-radius: 50px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">New Briefing</span>
+        <div style="font-family: 'Inter', system-ui, sans-serif; background-color: #08080a; color: #fcfcfc; padding: 60px 40px; border-radius: 4px; max-width: 600px; margin: 0 auto;">
+          <div style="margin-bottom: 32px;">
+            <span style="background: rgba(192, 132, 252, 0.1); color: #c084fc; padding: 6px 12px; border-radius: 2px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Latest Intelligence Briefing</span>
           </div>
-          <h1 style="color: #fcfcfc; font-size: 2rem; line-height: 1.2; margin-bottom: 10px;">${title}</h1>
-          <p style="color: #94a3b8; font-size: 1.1rem; margin-bottom: 30px;">A new intelligence report has been declassified in the <strong>${category || 'General'}</strong> sector.</p>
           
-          <a href="${reportUrl}" style="display: inline-block; background-color: #c084fc; color: #fff; padding: 12px 25px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-bottom: 40px;">Access Initial Briefing</a>
+          <h1 style="color: #fcfcfc; font-size: 28px; line-height: 1.25; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.01em;">${title}</h1>
+          <p style="color: #94a3b8; font-size: 16px; line-height: 1.6; margin-bottom: 40px;">
+            A new analytical report has been published in the <strong>${category || 'General'}</strong> sector. We invite you to review the latest findings and strategic updates.
+          </p>
           
-          <div style="border-top: 1px solid #1a1a20; padding-top: 20px; color: #555; font-size: 0.8rem;">
-            <p>You are receiving this because you are part of The Black Light intelligence network.</p>
-            <p>&copy; 2026 The Black Light | Intelligence Division</p>
+          <a href="${reportUrl}" style="display: inline-block; background-color: #c084fc; color: #ffffff; padding: 14px 32px; border-radius: 4px; text-decoration: none; font-weight: 700; font-size: 14px;">Access Full Report</a>
+          
+          <div style="margin-top: 60px; padding-top: 32px; border-top: 1px solid #1a1a20; color: #64748b; font-size: 12px; line-height: 1.6;">
+            <p style="margin-bottom: 8px;">You are receiving this briefing as a registered subscriber to The Black Light network.</p>
+            <p style="margin: 0;">&copy; 2026 The Black Light | Strategy & Macro Intelligence</p>
           </div>
         </div>
       `,
