@@ -121,7 +121,15 @@
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                                     <div class="form-group">
                                         <label>Category</label>
-                                        <input type="text" id="new-blog-category" placeholder="e.g. Energy" required/>
+                                        <select id="new-blog-category" required>
+                                            <option value="" disabled selected>Select Category</option>
+                                            <option value="Global Markets">Global Markets</option>
+                                            <option value="Energy">Energy</option>
+                                            <option value="Economics">Economics</option>
+                                            <option value="Policy">Policy</option>
+                                            <option value="Geopolitics">Geopolitics</option>
+                                            <option value="Technology">Technology</option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label>Author / Source</label>
