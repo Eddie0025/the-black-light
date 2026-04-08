@@ -6,6 +6,12 @@ function autoResize(textarea) {
     textarea.style.height = textarea.scrollHeight + 'px';
 }
 
+function toggleWorkspaceSize() {
+    const textarea = document.getElementById('new-blog-content');
+    textarea.classList.toggle('compact-view');
+    autoResize(textarea);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initializeAdminAuth();
     initFileUploadListener();
@@ -464,6 +470,9 @@ async function editHubArticle(id) {
         const editorTextarea = document.getElementById('new-blog-content');
         editorTextarea.value = blog.content;
         
+        // Load stats visibility
+        document.getElementById('show-stats').checked = blog.show_stats !== false;
+        
         // Trigger auto-resize after loading content
         autoResize(editorTextarea);
         
@@ -483,6 +492,7 @@ function cancelEditing() {
     document.getElementById('publish-btn').innerText = "Publish to Intelligence Feed";
     document.getElementById('cancel-edit-btn').style.display = 'none';
     document.getElementById('file-name-label').innerText = "No file chosen";
+    document.getElementById('show-stats').checked = true;
     
     // Reset textarea height
     const textarea = document.getElementById('new-blog-content');
@@ -594,7 +604,8 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
             cover_image: cover_image || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80',
             content,
             excerpt,
-            is_archived: false
+            is_archived: false,
+            show_stats: document.getElementById('show-stats').checked
         };
 
         if (editingBlogId) {

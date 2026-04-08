@@ -6,7 +6,7 @@
     <title>Intelligence Hub | The Black Light</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
     <!-- Supabase JS Client -->
@@ -139,12 +139,17 @@
                                 <div class="form-group">
                                     <label style="display: flex; justify-content: space-between; align-items: center;">
                                         <span>Report Content (HTML allowed)</span>
-                                        <div style="font-size: 0.85rem;">
+                                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                            <button type="button" class="nav-btn" onclick="toggleWorkspaceSize()" style="width: auto; padding: 0.2rem 0.6rem; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); font-size: 0.8rem;">📐 Compact / Full</button>
                                             <input type="file" id="docx-upload" accept=".docx,.pdf" style="display: none;"/>
                                             <button type="button" class="nav-btn" onclick="document.getElementById('docx-upload').click()" style="width: auto; padding: 0.2rem 0.6rem; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); font-size: 0.8rem;">📄 Import Document (.docx / .pdf)</button>
                                         </div>
                                     </label>
                                     <textarea id="new-blog-content" rows="10" placeholder="Analyze the unseen..." required oninput="autoResize(this)"></textarea>
+                                </div>
+                                <div class="form-group" style="flex-direction: row; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                                    <input type="checkbox" id="show-stats" checked style="width: auto;"/>
+                                    <label for="show-stats" style="margin: 0;">Show likes/engagement on public article</label>
                                 </div>
                                 <div class="form-group" style="display: flex; gap: 1rem;">
                                     <button type="submit" class="submit-btn box-glow" id="publish-btn" style="flex-grow: 1;">Publish to Intelligence Feed</button>
