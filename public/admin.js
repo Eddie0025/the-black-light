@@ -1,6 +1,11 @@
 let editingBlogId = null;
 let authReady = false;
 
+function autoResize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initializeAdminAuth();
     initFileUploadListener();
@@ -456,7 +461,11 @@ async function editHubArticle(id) {
         document.getElementById('new-blog-category').value = blog.category;
         document.getElementById('new-blog-author').value = blog.author;
         document.getElementById('new-blog-image').value = blog.cover_image;
-        document.getElementById('new-blog-content').value = blog.content;
+        const editorTextarea = document.getElementById('new-blog-content');
+        editorTextarea.value = blog.content;
+        
+        // Trigger auto-resize after loading content
+        autoResize(editorTextarea);
         
         document.getElementById('publish-btn').innerText = "Update Intelligence Report";
         document.getElementById('cancel-edit-btn').style.display = 'block';
@@ -474,6 +483,12 @@ function cancelEditing() {
     document.getElementById('publish-btn').innerText = "Publish to Intelligence Feed";
     document.getElementById('cancel-edit-btn').style.display = 'none';
     document.getElementById('file-name-label').innerText = "No file chosen";
+    
+    // Reset textarea height
+    const textarea = document.getElementById('new-blog-content');
+    if (textarea) {
+        textarea.style.height = 'auto';
+    }
 }
 
 async function archiveHubArticle(id) {
@@ -559,13 +574,14 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
             cover_image = publicUrlData.publicUrl;
         }
 
+        // Improved paragraph detection: 
+        // 1. Split by double newlines to find paragraphs
+        // 2. Wrap each resulting chunk in <p> labels
         if (content.indexOf('<p>') === -1 && content.indexOf('<h') === -1) {
-            var lines = content.split('\n');
-            var formatted = '';
-            for (var i = 0; i < lines.length; i++) {
-                if (lines[i].trim() !== '') formatted += '<p>' + lines[i] + '</p>';
-            }
-            content = formatted;
+            const paragraphs = content.split(/\n\s*\n/);
+            content = paragraphs
+                .map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`)
+                .join('\n');
         }
 
         const tempElement = content.replace(/<[^>]+>/g, '');
