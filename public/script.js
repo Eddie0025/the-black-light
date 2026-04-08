@@ -228,6 +228,14 @@ async function openArticle(id) {
             
         renderComments(comments || []);
         
+        // Dynamic SEO Update
+        updateSEO(
+            post.title, 
+            post.excerpt || post.content.replace(/<[^>]*>?/gm, '').substring(0, 160), 
+            post.cover_image,
+            window.location.href
+        );
+        
         navigateTo('article');
         trackView(); 
     } catch (e) {
@@ -437,3 +445,40 @@ function copyArticleLink() {
         closeShareModal();
     });
 }
+
+// ---- SEO Engine ----
+
+function updateSEO(title, description, image, url) {
+    // Standard Tags
+    document.title = `${title} | The Black Light`;
+    const metaDesc = document.getElementById('meta-desc');
+    if (metaDesc) metaDesc.setAttribute('content', description);
+
+    // OpenGraph Tags
+    const ogTitle = document.getElementById('og-title');
+    const ogDesc = document.getElementById('og-desc');
+    const ogImage = document.getElementById('og-image');
+    if (ogTitle) ogTitle.setAttribute('content', title);
+    if (ogDesc) ogDesc.setAttribute('content', description);
+    if (ogImage) ogImage.setAttribute('content', image);
+
+    // Canonical
+    const canonical = document.getElementById('canonical-url');
+    if (canonical) canonical.setAttribute('href', url);
+}
+
+function resetSEO() {
+    updateSEO(
+        "The Black Light | Professional Intelligence & Insights",
+        "Deep-dive analysis on global macroeconomics, energy markets, and international policy.",
+        "black_light_logo.png",
+        "https://theblacklight.blog/"
+    );
+}
+
+// Hook reset into navigation
+const originalNavigateTo = navigateTo;
+navigateTo = function(viewId) {
+    if (viewId === 'home') resetSEO();
+    originalNavigateTo(viewId);
+};
