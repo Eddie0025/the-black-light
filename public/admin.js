@@ -480,7 +480,25 @@ async function editHubArticle(id) {
         if (error) throw error;
         
         document.getElementById('new-blog-title').value = blog.title;
-        document.getElementById('new-blog-category').value = blog.category;
+        
+        // Robust case-insensitive category selection
+        const catSelect = document.getElementById('new-blog-category');
+        const blogCat = blog.category;
+        const matchingOption = Array.from(catSelect.options).find(opt => 
+            opt.value.toLowerCase() === blogCat?.toLowerCase() || 
+            opt.innerText.toLowerCase() === blogCat?.toLowerCase()
+        );
+        if (matchingOption) {
+            catSelect.value = matchingOption.value;
+        } else if (blogCat) {
+            // Fallback for custom categories not in our new dropdown
+            const tempOpt = document.createElement('option');
+            tempOpt.value = blogCat;
+            tempOpt.innerText = blogCat;
+            catSelect.appendChild(tempOpt);
+            catSelect.value = blogCat;
+        }
+        
         document.getElementById('new-blog-author').value = blog.author;
         document.getElementById('new-blog-image').value = blog.cover_image;
         const editorTextarea = document.getElementById('new-blog-content');

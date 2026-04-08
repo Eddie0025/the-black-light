@@ -91,7 +91,7 @@ async function fetchBlogs(category = null) {
     try {
         let query = supabase.from('blogs').select('*').eq('is_archived', false).order('id', { ascending: false });
         if (category) {
-            query = query.ilike('category', category);
+            query = query.ilike('category', `%${category.trim()}%`);
         }
         
         const { data: blogs, error } = await query;
