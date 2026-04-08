@@ -40,21 +40,24 @@ export default async function handler(req, res) {
       reply_to: 'theblacklighttt@gmail.com',
       subject: `BRIEFING: ${title} | The Black Light`,
       html: `
-        <div style="font-family: 'Inter', system-ui, sans-serif; background-color: #08080a; color: #fcfcfc; padding: 60px 40px; border-radius: 4px; max-width: 600px; margin: 0 auto;">
-          <div style="margin-bottom: 32px;">
-            <span style="background: rgba(192, 132, 252, 0.1); color: #c084fc; padding: 6px 12px; border-radius: 2px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Latest Intelligence Briefing</span>
-          </div>
+        <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #08080a; color: #fcfcfc; padding: 60px 40px; border-radius: 4px; max-width: 600px; margin: 0 auto; border: 1px solid #1a1a20;">
+          <div style="margin-bottom: 48px; border-bottom: 2px solid #c084fc; width: 40px;"></div>
           
-          <h1 style="color: #fcfcfc; font-size: 28px; line-height: 1.25; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.01em;">${title}</h1>
-          <p style="color: #94a3b8; font-size: 16px; line-height: 1.6; margin-bottom: 40px;">
-            A new analytical report has been published in the <strong>${category || 'General'}</strong> sector. We invite you to review the latest findings and strategic updates.
+          <h1 style="color: #fcfcfc; font-size: 32px; line-height: 1.15; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.03em;">${title}</h1>
+          
+          <div style="margin-bottom: 32px; display: flex; gap: 12px; align-items: center;">
+            <span style="color: #c084fc; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;">${category || 'Analytical Intelligence'}</span>
+          </div>
+
+          <p style="color: #94a3b8; font-size: 16px; line-height: 1.7; margin-bottom: 40px;">
+            Our latest analytical briefing has been finalized. We provide deep-dive insights and strategic projections on the evolving situation in the <strong>${category || 'General'}</strong> sector.
           </p>
           
-          <a href="${reportUrl}" style="display: inline-block; background-color: #c084fc; color: #ffffff; padding: 14px 32px; border-radius: 4px; text-decoration: none; font-weight: 700; font-size: 14px;">Access Full Report</a>
+          <a href="${reportUrl}" style="display: inline-block; background-color: #ffffff; color: #000000; padding: 16px 40px; border-radius: 2px; text-decoration: none; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">Access Full Briefing</a>
           
-          <div style="margin-top: 60px; padding-top: 32px; border-top: 1px solid #1a1a20; color: #64748b; font-size: 12px; line-height: 1.6;">
-            <p style="margin-bottom: 8px;">You are receiving this briefing as a registered subscriber to The Black Light network.</p>
-            <p style="margin: 0;">&copy; 2026 The Black Light | Strategy & Macro Intelligence</p>
+          <div style="margin-top: 80px; padding-top: 32px; border-top: 1px solid #1a1a20; color: #475569; font-size: 11px; line-height: 1.8; letter-spacing: 0.02em;">
+            <p style="margin-bottom: 12px;">This document is intended for the registered recipient. Confidentiality and strategic discretion are advised.</p>
+            <p style="margin: 0; text-transform: uppercase;">&copy; 2026 The Black Light | Global Strategy & Macro Analysis</p>
           </div>
         </div>
       `,
