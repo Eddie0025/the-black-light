@@ -267,14 +267,35 @@ async function handlePdfImport(file, inputEl) {
 
 /* ================== INTELLIGENCE HUB LOGIC ================== */
 
-function switchTab(tabId) {
-    document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
-    // Find the correct button by text content (approximate)
-    const activeBtn = Array.from(document.querySelectorAll('.sidebar-btn')).find(b => b.innerText.toLowerCase().includes(tabId));
-    if (activeBtn) activeBtn.classList.add('active');
+function toggleSidebar() {
+    const sidebar = document.getElementById('admin-sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
     
+    if (!overlay) {
+        const div = document.createElement('div');
+        div.className = 'sidebar-overlay';
+        div.onclick = toggleSidebar;
+        document.body.appendChild(div);
+    }
+    
+    sidebar.classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-    document.getElementById('tab-' + tabId).style.display = 'block';
+    document.getElementById(`tab-${tabId}`).style.display = 'block';
+    
+    document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    // Close sidebar on mobile after selection
+    const sidebar = document.getElementById('admin-sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        if (overlay) overlay.classList.remove('active');
+    }
     
     if (tabId === 'articles') fetchHubArticles();
     if (tabId === 'archive') fetchArchivedArticles();

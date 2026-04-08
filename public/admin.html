@@ -48,11 +48,18 @@
 
         <!-- DASHBOARD VIEW -->
         <section id="dashboard-view" class="view" style="display: none; min-height: 100vh;">
-            <div class="admin-panel wide animate-scale">
-                
+                <!-- Mobile Header Toggle -->
+                <div class="mobile-admin-header">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <img src="black_light_logo.png" alt="Logo" style="height: 24px;">
+                        <span>tbl.hub</span>
+                    </div>
+                    <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
+                </div>
+
                 <div class="dashboard-container">
                     <!-- Sidebar -->
-                    <aside class="dashboard-sidebar">
+                    <aside class="dashboard-sidebar" id="admin-sidebar">
                         <div class="logo-area" style="margin-bottom: 2rem; padding-left: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                             <img src="black_light_logo.png" alt="Logo" style="height: 30px; border-radius: 4px;">
                             <div class="logo" style="font-size: 1.2rem;">tbl.hub</div>
