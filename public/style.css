@@ -1159,3 +1159,51 @@ body.light-mode input, body.light-mode textarea, body.light-mode .blog-card, bod
     width: 100%;
     margin-bottom: 2rem;
 }
+
+/* Share Menu Refinements */
+.share-menu {
+    max-width: 380px;
+    padding: 2.5rem;
+}
+
+.share-options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.share-option-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 0.5rem;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: var(--transition-fast);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.share-option-btn:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-3px);
+    border-color: var(--accent);
+}
+
+.share-option-btn svg {
+    color: var(--text-secondary);
+    transition: var(--transition-fast);
+}
+
+.share-option-btn:hover svg {
+    color: var(--accent);
+    transform: scale(1.1);
+}
+
+.wa-btn:hover { color: #25D366; }
+.li-btn:hover { color: #0077B5; }
+.x-btn:hover { color: #fff; }
+.copy-btn:hover { color: var(--accent); }

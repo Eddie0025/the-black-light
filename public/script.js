@@ -382,3 +382,58 @@ function showToast(message) {
         toast.remove();
     }, 3000);
 }
+
+// ---- Sharing Suite ----
+
+async function handleShare() {
+    const shareData = {
+        title: document.getElementById('article-title').innerText,
+        text: 'The Black Light | Professional Intelligence Report',
+        url: window.location.href
+    };
+
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+        } catch (err) {
+            if (err.name !== 'AbortError') showShareModal();
+        }
+    } else {
+        showShareModal();
+    }
+}
+
+function showShareModal() {
+    document.getElementById('share-modal').classList.add('show');
+}
+
+function closeShareModal() {
+    document.getElementById('share-modal').classList.remove('show');
+}
+
+function shareTo(platform) {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(document.getElementById('article-title').innerText);
+    let shareUrl = '';
+
+    switch(platform) {
+        case 'x': 
+            shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+            break;
+        case 'whatsapp':
+            shareUrl = `https://wa.me/?text=${text}%20${url}`;
+            break;
+        case 'linkedin':
+            shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+            break;
+    }
+
+    if (shareUrl) window.open(shareUrl, '_blank');
+}
+
+function copyArticleLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        showToast("Intelligence link copied to clipboard");
+        closeShareModal();
+    });
+}
