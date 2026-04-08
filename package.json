@@ -6,6 +6,10 @@
   "scripts": {
     "start": "npx serve public -l 3000"
   },
+  "dependencies": {
+    "resend": "^3.1.0",
+    "@supabase/supabase-js": "^2.39.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC"
