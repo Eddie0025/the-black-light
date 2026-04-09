@@ -58,7 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewParam = urlParams.get('view');
     
     if (articleId) {
-        fetchArticle(articleId, false); // Fetch but don't push history (initial state)
+        // Show skeleton immediately
+        navigateTo('article', false, { id: articleId });
+        fetchArticle(articleId, false); 
     } else if (viewParam === 'article') {
         // Redirect to home if article view requested without an ID
         navigateTo('home', false);
@@ -67,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         navigateTo(viewParam, false);
     } else {
         // Default initial state
-        history.replaceState({ view: 'home' }, '', window.location.pathname);
+        navigateTo('home', false);
         fetchBlogs();
     }
     
@@ -252,6 +254,24 @@ function changePage(delta) {
 }
 
 async function fetchArticle(id, pushHistory = true) {
+    // Show article view immediately (with skeleton logic)
+    // If we already have the title in URL, we can use it, otherwise generic skeleton
+    const urlParams = new URLSearchParams(window.location.search);
+    const titleFromUrl = urlParams.get('title');
+    
+    navigateTo('article', pushHistory, { id: id, title: titleFromUrl });
+
+    // Prepare UI for new content (ensure skeletons are visible if they were hidden)
+    const skeletonCategory = document.getElementById('skeleton-category');
+    const skeletonMeta = document.getElementById('skeleton-meta');
+    const articleCover = document.getElementById('article-cover');
+    const articleMeta = document.getElementById('article-meta');
+    
+    if (skeletonCategory) skeletonCategory.style.display = 'block';
+    if (skeletonMeta) skeletonMeta.style.display = 'block';
+    if (articleCover) articleCover.classList.add('skeleton');
+    if (articleMeta) articleMeta.style.opacity = '0';
+    
     try {
         const { data: post, error } = await supabase
             .from('blogs')
@@ -272,9 +292,15 @@ async function fetchArticle(id, pushHistory = true) {
         document.getElementById('article-date').innerText = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric'});
         
         document.getElementById('article-cover').style.backgroundImage = `url('${post.cover_image}')`;
+        const coverEl = document.getElementById('article-cover');
+        coverEl.classList.remove('skeleton');
+        coverEl.style.backgroundColor = 'transparent';
+        
         document.getElementById('article-body').innerHTML = post.content;
         
-        // Show author meta
+        // Hide skeletons and show author meta
+        if (skeletonCategory) skeletonCategory.style.display = 'none';
+        if (skeletonMeta) skeletonMeta.style.display = 'none';
         document.getElementById('article-meta').style.opacity = '1';
         
         // Handle stats visibility

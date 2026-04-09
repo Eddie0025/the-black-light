@@ -48,7 +48,7 @@
     <main class="app-container">
         
         <!-- HOME VIEW -->
-        <section id="home-view" class="view active">
+        <section id="home-view" class="view">
             <header class="hero">
                 <div class="featured-badge animate-up">Featured Intelligence</div>
                 <h2 class="animate-up">Illuminating the unseen.</h2>
@@ -70,14 +70,15 @@
             <button class="back-btn" onclick="navigateTo('home')">&larr; Back to Home</button>
             <article class="blog-article layout-transition">
                 <div class="article-header">
-                    <span class="article-category" id="article-category"></span>
-                    <h1 id="article-title">Loading Intelligence...</h1>
+                    <div class="skeleton-text" id="skeleton-category" style="width: 100px; margin: 0 auto 1rem;"></div>
+                    <h1 id="article-title" style="margin-bottom: 1rem;"><div class="skeleton-text" style="height: 3.5rem; width: 80%; margin: 0 auto;"></div></h1>
                     <div class="article-meta" id="article-meta" style="opacity: 0;">
                         <span id="article-author"></span> &bull; 
                         <span id="article-date"></span>
                     </div>
+                    <div class="skeleton-text" id="skeleton-meta" style="width: 200px; margin: 0 auto; height: 1rem;"></div>
                 </div>
-                <div class="article-cover" id="article-cover" style="min-height: 400px; background-color: rgba(255,255,255,0.03);">
+                <div class="article-cover skeleton" id="article-cover" style="min-height: 400px; border-radius: var(--radius-lg); margin-bottom: 3rem;">
                     <!-- Image -->
                 </div>
                 <div class="article-content" id="article-body">
