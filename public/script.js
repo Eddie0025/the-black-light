@@ -128,7 +128,7 @@ function renderSkeletons() {
     }
 }
 
-function navigateTo(viewId, pushHistory = true, extraData = {}) {
+function navigateTo(viewId, pushHistory = true, extraData = {}, mode = 'push') {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     
     const targetView = document.getElementById(`${viewId}-view`);
@@ -147,12 +147,18 @@ function navigateTo(viewId, pushHistory = true, extraData = {}) {
             url += `?category=${encodeURIComponent(extraData.category)}`;
         }
         
-        history.pushState({ 
+        const state = { 
             view: viewId, 
             id: extraData.id || null, 
             category: extraData.category || null,
             title: extraData.title || null
-        }, '', url);
+        };
+
+        if (mode === 'replace') {
+            history.replaceState(state, '', url);
+        } else {
+            history.pushState(state, '', url);
+        }
     }
 }
 
@@ -349,7 +355,9 @@ async function fetchArticle(id, pushHistory = true) {
             window.location.href
         );
         
-        navigateTo('article', pushHistory, { id: post.id, title: post.title });
+        // Use 'replace' mode here so we don't create two history entries 
+        // (one for ID and one for ID+Title). This fixes the "Back button twice" issue.
+        navigateTo('article', pushHistory, { id: post.id, title: post.title }, 'replace');
         trackView(); 
     } catch (e) {
         console.error("Failed to fetch article", e);
