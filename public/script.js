@@ -4,6 +4,16 @@ let allBlogs = [];
 let currentPage = 1;
 const pageSize = 5;
 
+// URL Slug Helper
+function slugify(text) {
+    return text.toString().toLowerCase()
+        .replace(/\s+/g, '-')           // Replace spaces with -
+        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+        .replace(/^-+/, '')             // Trim - from start of text
+        .replace(/-+$/, '');            // Trim - from end of text
+}
+
 // Intersection Observer for Scroll Reveals
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -49,6 +59,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (articleId) {
         fetchArticle(articleId, false); // Fetch but don't push history (initial state)
+    } else if (viewParam === 'article') {
+        // Redirect to home if article view requested without an ID
+        navigateTo('home', false);
+        fetchBlogs();
     } else if (viewParam) {
         navigateTo(viewParam, false);
     } else {
@@ -123,7 +137,8 @@ function navigateTo(viewId, pushHistory = true, extraData = {}) {
     if (pushHistory) {
         let url = window.location.pathname;
         if (viewId === 'article' && extraData.id) {
-            url += `?id=${extraData.id}`;
+            const slug = extraData.title ? `&title=${slugify(extraData.title)}` : '';
+            url += `?id=${extraData.id}${slug}`;
         } else if (viewId !== 'home') {
             url += `?view=${viewId}`;
         } else if (extraData.category) {
@@ -133,7 +148,8 @@ function navigateTo(viewId, pushHistory = true, extraData = {}) {
         history.pushState({ 
             view: viewId, 
             id: extraData.id || null, 
-            category: extraData.category || null 
+            category: extraData.category || null,
+            title: extraData.title || null
         }, '', url);
     }
 }
@@ -258,6 +274,9 @@ async function fetchArticle(id, pushHistory = true) {
         document.getElementById('article-cover').style.backgroundImage = `url('${post.cover_image}')`;
         document.getElementById('article-body').innerHTML = post.content;
         
+        // Show author meta
+        document.getElementById('article-meta').style.opacity = '1';
+        
         // Handle stats visibility
         const statsWrapper = document.getElementById('stats-wrapper');
         if (post.show_stats) {
@@ -289,7 +308,7 @@ async function fetchArticle(id, pushHistory = true) {
             window.location.href
         );
         
-        navigateTo('article', pushHistory, { id: post.id });
+        navigateTo('article', pushHistory, { id: post.id, title: post.title });
         trackView(); 
     } catch (e) {
         console.error("Failed to fetch article", e);
@@ -553,9 +572,9 @@ function resetSEO() {
     );
 }
 
-// Hook reset into navigation
+// Hook reset into navigation - Fix: Properly spread arguments to avoid losing data like article ID
 const originalNavigateTo = navigateTo;
-navigateTo = function(viewId) {
-    if (viewId === 'home') resetSEO();
-    originalNavigateTo(viewId);
+navigateTo = function(...args) {
+    if (args[0] === 'home') resetSEO();
+    originalNavigateTo(...args);
 };
