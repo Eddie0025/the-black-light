@@ -70,8 +70,13 @@
             <button class="back-btn" onclick="navigateTo('home')">&larr; Back to Home</button>
             <article class="blog-article layout-transition">
                 <div class="article-header">
+                    <span class="article-category" id="article-category"></span>
                     <div class="skeleton-text" id="skeleton-category" style="width: 100px; margin: 0 auto 1rem;"></div>
-                    <h1 id="article-title" style="margin-bottom: 1rem;"><div class="skeleton-text" style="height: 3.5rem; width: 80%; margin: 0 auto;"></div></h1>
+                    
+                    <h1 id="article-title" style="margin-bottom: 1rem;">
+                        <div class="skeleton-text" id="skeleton-title" style="height: 3.5rem; width: 80%; margin: 0 auto;"></div>
+                    </h1>
+                    
                     <div class="article-meta" id="article-meta" style="opacity: 0;">
                         <span id="article-author"></span> &bull; 
                         <span id="article-date"></span>

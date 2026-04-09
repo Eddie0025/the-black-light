@@ -284,24 +284,39 @@ async function fetchArticle(id, pushHistory = true) {
         currentArticleId = post.id;
         userLikeState = null;
         
-        document.getElementById('article-category').innerText = post.category || 'Opinion';
-        document.getElementById('article-title').innerText = post.title;
-        document.getElementById('article-author').innerText = `By ${post.author}`;
+        const catEl = document.getElementById('article-category');
+        const titleEl = document.getElementById('article-title');
+        const authorEl = document.getElementById('article-author');
+        const dateEl = document.getElementById('article-date');
+        const coverEl = document.getElementById('article-cover');
+        const bodyEl = document.getElementById('article-body');
+        
+        if (catEl) {
+            catEl.innerText = post.category || 'Opinion';
+            catEl.style.display = 'inline-block';
+        }
+        if (titleEl) titleEl.innerText = post.title;
+        if (authorEl) authorEl.innerText = `By ${post.author}`;
         
         const dateObj = new Date(post.created_at);
-        document.getElementById('article-date').innerText = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric'});
+        if (dateEl) dateEl.innerText = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric'});
         
-        document.getElementById('article-cover').style.backgroundImage = `url('${post.cover_image}')`;
-        const coverEl = document.getElementById('article-cover');
-        coverEl.classList.remove('skeleton');
-        coverEl.style.backgroundColor = 'transparent';
+        if (coverEl) {
+            coverEl.style.backgroundImage = `url('${post.cover_image}')`;
+            coverEl.classList.remove('skeleton');
+            coverEl.style.backgroundColor = 'transparent';
+        }
         
-        document.getElementById('article-body').innerHTML = post.content;
+        if (bodyEl) bodyEl.innerHTML = post.content;
         
         // Hide skeletons and show author meta
         if (skeletonCategory) skeletonCategory.style.display = 'none';
+        const skeletonTitle = document.getElementById('skeleton-title');
+        if (skeletonTitle) skeletonTitle.style.display = 'none';
         if (skeletonMeta) skeletonMeta.style.display = 'none';
-        document.getElementById('article-meta').style.opacity = '1';
+        
+        const metaWrapper = document.getElementById('article-meta');
+        if (metaWrapper) metaWrapper.style.opacity = '1';
         
         // Handle stats visibility
         const statsWrapper = document.getElementById('stats-wrapper');
