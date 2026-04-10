@@ -2,6 +2,7 @@ let currentArticleId = null;
 let userLikeState = null;
 let allBlogs = [];
 let currentPage = 1;
+let activeCategory = null;
 const pageSize = 5;
 
 // URL Slug Helper
@@ -56,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
     const articleId = urlParams.get('id');
     const viewParam = urlParams.get('view');
+    const categoryParam = urlParams.get('category');
     
     if (articleId) {
         // Show skeleton immediately
@@ -65,6 +67,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Redirect to home if article view requested without an ID
         navigateTo('home', false);
         fetchBlogs();
+    } else if (categoryParam) {
+        navigateTo('home', false, { category: categoryParam });
+        fetchBlogs(categoryParam);
     } else if (viewParam) {
         navigateTo(viewParam, false);
     } else {
@@ -166,9 +171,10 @@ function navigateTo(viewId, pushHistory = true, extraData = {}, mode = 'push') {
 
 async function fetchBlogs(category = null) {
     try {
+        activeCategory = category ? category.trim() : null;
         let query = supabase.from('blogs').select('*').eq('is_archived', false).order('id', { ascending: false });
-        if (category) {
-            query = query.ilike('category', `%${category.trim()}%`);
+        if (activeCategory) {
+            query = query.ilike('category', `%${activeCategory}%`);
         }
         
         const { data: blogs, error } = await query;
@@ -179,13 +185,23 @@ async function fetchBlogs(category = null) {
         
         const heroTitle = document.querySelector('.hero h2');
         if (heroTitle) {
-            heroTitle.innerText = category ? category + ' Intelligence' : 'Illuminating the unseen.';
+            heroTitle.innerText = activeCategory ? activeCategory + ' Intelligence' : 'Illuminating the unseen.';
         }
+        updateCategoryChips();
         
         renderHomeFeed();
     } catch (e) {
         console.error(e);
     }
+}
+
+function updateCategoryChips() {
+    document.querySelectorAll('.category-chip').forEach(chip => {
+        const chipCategory = chip.dataset.category?.trim() || '';
+        const isActive = (activeCategory || '') === chipCategory;
+        chip.classList.toggle('active', isActive);
+        chip.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
 }
 
 function loadCategory(category) {
