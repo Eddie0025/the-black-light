@@ -42,6 +42,15 @@
                 <!-- Removed login/subscribe buttons; moved to footer -->
             </div>
         </div>
+        <div class="header-categories" aria-label="Blog categories">
+            <button type="button" class="category-chip active" data-category="" onclick="loadHome()">All</button>
+            <button type="button" class="category-chip" data-category="Global Markets" onclick="loadCategory('Global Markets')">Global Markets</button>
+            <button type="button" class="category-chip" data-category="Energy" onclick="loadCategory('Energy')">Energy</button>
+            <button type="button" class="category-chip" data-category="Economics" onclick="loadCategory('Economics')">Economics</button>
+            <button type="button" class="category-chip" data-category="Policy" onclick="loadCategory('Policy')">Policy</button>
+            <button type="button" class="category-chip" data-category="Geopolitics" onclick="loadCategory('Geopolitics')">Geopolitics</button>
+            <button type="button" class="category-chip" data-category="Technology" onclick="loadCategory('Technology')">Technology</button>
+        </div>
     </nav>
 
     <!-- App Container -->
@@ -54,15 +63,6 @@
                 <h2 class="animate-up">Illuminating the unseen.</h2>
                 <div class="hero-desc-wrapper">
                     <p class="animate-up delay-1">Deep-dive analysis on global macroeconomics, energy markets, and international policy.</p>
-                </div>
-                <div class="hero-categories animate-up delay-2" aria-label="Blog categories">
-                    <button type="button" class="category-chip active" data-category="" onclick="loadHome()">All</button>
-                    <button type="button" class="category-chip" data-category="Global Markets" onclick="loadCategory('Global Markets')">Global Markets</button>
-                    <button type="button" class="category-chip" data-category="Energy" onclick="loadCategory('Energy')">Energy</button>
-                    <button type="button" class="category-chip" data-category="Economics" onclick="loadCategory('Economics')">Economics</button>
-                    <button type="button" class="category-chip" data-category="Policy" onclick="loadCategory('Policy')">Policy</button>
-                    <button type="button" class="category-chip" data-category="Geopolitics" onclick="loadCategory('Geopolitics')">Geopolitics</button>
-                    <button type="button" class="category-chip" data-category="Technology" onclick="loadCategory('Technology')">Technology</button>
                 </div>
             </header>
             <div class="blog-grid list-layout" id="blog-grid">

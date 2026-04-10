@@ -180,6 +180,17 @@ input:focus, textarea:focus {
     align-items: center;
 }
 
+.header-categories {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 0.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.04);
+}
+
 .nav-btn {
     font-size: 0.95rem;
     font-weight: 500;
@@ -209,7 +220,7 @@ input:focus, textarea:focus {
 /* ================== VIEWS ================== */
 .app-container {
     max-width: 1200px;
-    margin: 6rem auto 3rem;
+    margin: 9.5rem auto 3rem;
     padding: 0 2rem;
     min-height: 80vh;
 }
@@ -263,14 +274,6 @@ input:focus, textarea:focus {
     font-size: 1.25rem;
     color: var(--text-secondary);
     font-weight: 400;
-}
-
-.hero-categories {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem;
-    margin-top: 2rem;
 }
 
 .category-chip {
@@ -1022,7 +1025,9 @@ body.light-mode .blog-card {
     #article-title { font-size: 2rem; }
     
     .app-container { padding: 0 1rem; }
+    .app-container { margin-top: 10.75rem; }
     .nav-container { padding: 1rem; }
+    .header-categories { padding: 0 1rem 0.75rem; }
     
     .blog-card {
         flex-direction: column;
@@ -1036,10 +1041,6 @@ body.light-mode .blog-card {
     }
     
     .logo { font-size: 1.3rem; }
-
-    .hero-categories {
-        gap: 0.6rem;
-    }
 
     .category-chip {
         font-size: 0.9rem;
