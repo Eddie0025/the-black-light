@@ -34,22 +34,20 @@
                 <img src="black_light_logo.png" alt="Logo" style="height: 35px; border-radius: 6px;">
                 <h1 class="logo">The Black <span class="brand-accent">Light</span><span class="dot">.</span></h1>
             </div>
-            <div class="nav-links">
+            <div class="nav-links" aria-label="Blog categories">
+                <button type="button" class="category-chip active" data-category="" onclick="loadHome()">Home</button>
+                <button type="button" class="category-chip" data-category="Global Markets" onclick="loadCategory('Global Markets')">Global Markets</button>
+                <button type="button" class="category-chip" data-category="Energy" onclick="loadCategory('Energy')">Energy</button>
+                <button type="button" class="category-chip" data-category="Economics" onclick="loadCategory('Economics')">Economics</button>
+                <button type="button" class="category-chip" data-category="Policy" onclick="loadCategory('Policy')">Policy</button>
+                <button type="button" class="category-chip" data-category="Geopolitics" onclick="loadCategory('Geopolitics')">Geopolitics</button>
+                <button type="button" class="category-chip" data-category="Technology" onclick="loadCategory('Technology')">Technology</button>
+            </div>
+            <div class="nav-actions">
                 <button class="nav-btn theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode">
                     <span class="icon">🌓</span>
                 </button>
-                <button class="nav-btn" onclick="loadHome()">Home</button>
-                <!-- Removed login/subscribe buttons; moved to footer -->
             </div>
-        </div>
-        <div class="header-categories" aria-label="Blog categories">
-            <button type="button" class="category-chip active" data-category="" onclick="loadHome()">All</button>
-            <button type="button" class="category-chip" data-category="Global Markets" onclick="loadCategory('Global Markets')">Global Markets</button>
-            <button type="button" class="category-chip" data-category="Energy" onclick="loadCategory('Energy')">Energy</button>
-            <button type="button" class="category-chip" data-category="Economics" onclick="loadCategory('Economics')">Economics</button>
-            <button type="button" class="category-chip" data-category="Policy" onclick="loadCategory('Policy')">Policy</button>
-            <button type="button" class="category-chip" data-category="Geopolitics" onclick="loadCategory('Geopolitics')">Geopolitics</button>
-            <button type="button" class="category-chip" data-category="Technology" onclick="loadCategory('Technology')">Technology</button>
         </div>
     </nav>
 
