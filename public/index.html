@@ -24,6 +24,11 @@
     <meta id="og-url" property="og:url">
     <base href="/">
     
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <link id="canonical-url" rel="canonical">
     <script>
         /* Instant SEO Initialization: Prevents Google from misidentifying articles as home page duplicates */
@@ -121,8 +126,8 @@
                     </div>
                     <div class="skeleton-text" id="skeleton-meta" style="width: 200px; margin: 0 auto; height: 1rem;"></div>
                 </div>
-                <div class="article-cover skeleton" id="article-cover" style="min-height: 400px; border-radius: var(--radius-lg); margin-bottom: 3rem;">
-                    <!-- Image -->
+                <div class="article-cover-container skeleton" id="cover-skeleton-container">
+                    <img id="article-cover" class="article-cover-new" alt="Cover Image" style="display: none;"/>
                 </div>
                 <div class="article-content" id="article-body">
                     <div class="skeleton-text"></div>
@@ -262,12 +267,25 @@
 
     <!-- About Author Modal -->
     <div id="author-modal" class="modal-overlay" onclick="closeAuthorModal()">
-        <div class="modal-content animate-scale" onclick="event.stopPropagation()" style="max-width: 450px; text-align: center;">
+        <div class="modal-content dossier-card animate-scale" onclick="event.stopPropagation()">
             <button class="close-modal" onclick="closeAuthorModal()">&times;</button>
-            <img id="modal-author-image" src="" alt="Author Profile" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto 1.5rem; border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent-glow);"/>
-            <h3 id="modal-author-name" style="font-size: 1.8rem; margin-bottom: 0.2rem; color: var(--text-primary);">Author Profile</h3>
-            <div id="modal-author-title" style="font-size: 1rem; color: var(--accent); margin-bottom: 1rem; font-weight: 600;"></div>
-            <p id="modal-author-bio" style="font-size: 1rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;"></p>
+            
+            <div class="dossier-layout">
+                <div class="dossier-aside">
+                    <div class="dossier-avatar-wrapper">
+                        <img id="modal-author-image" src="" alt="Author Profile"/>
+                    </div>
+                    <div class="dossier-label">INTEL / AUTH</div>
+                </div>
+                
+                <div class="dossier-main">
+                    <div class="dossier-header">
+                        <h3 id="modal-author-name"></h3>
+                        <div id="modal-author-title" class="dossier-title"></div>
+                    </div>
+                    <p id="modal-author-bio" class="dossier-bio"></p>
+                </div>
+            </div>
         </div>
     </div>
 

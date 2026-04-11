@@ -272,11 +272,6 @@ async function fetchAuthorProfile() {
     }
 }
 
-function hideFooterAuthorCard() {
-    const card = document.getElementById('footer-author-card');
-    if (card) card.remove();
-}
-
 function openAuthorModal() {
     const modal = document.getElementById('author-modal');
     if (!modal) return;
@@ -422,12 +417,16 @@ async function fetchArticle(id, pushHistory = true) {
     // Prepare UI for new content (ensure skeletons are visible if they were hidden)
     const skeletonCategory = document.getElementById('skeleton-category');
     const skeletonMeta = document.getElementById('skeleton-meta');
-    const articleCover = document.getElementById('article-cover');
+    const coverContainer = document.getElementById('cover-skeleton-container');
     const articleMeta = document.getElementById('article-meta');
     
     if (skeletonCategory) skeletonCategory.style.display = 'block';
     if (skeletonMeta) skeletonMeta.style.display = 'block';
-    if (articleCover) articleCover.classList.add('skeleton');
+    if (coverContainer) {
+        coverContainer.classList.add('skeleton');
+        const img = coverContainer.querySelector('img');
+        if (img) img.style.display = 'none';
+    }
     if (articleMeta) articleMeta.style.opacity = '0';
     
     try {
@@ -460,9 +459,13 @@ async function fetchArticle(id, pushHistory = true) {
         if (dateEl) dateEl.innerText = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric'});
         
         if (coverEl) {
-            coverEl.style.backgroundImage = `url('${post.cover_image}')`;
-            coverEl.classList.remove('skeleton');
-            coverEl.style.backgroundColor = 'transparent';
+            coverEl.src = post.cover_image;
+            coverEl.onload = () => {
+                const container = document.getElementById('cover-skeleton-container');
+                if (container) container.classList.remove('skeleton');
+                coverEl.style.display = 'block';
+                coverEl.style.opacity = '1';
+            };
         }
         
         if (bodyEl) bodyEl.innerHTML = post.content;

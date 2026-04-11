@@ -517,19 +517,26 @@ body.light-mode .blog-card {
     font-size: 0.95rem;
 }
 
-.article-cover {
+.article-cover-container {
     width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    min-height: 250px;
-    max-height: 500px;
-    border-radius: var(--radius-lg);
-    background: rgba(0,0,0,0.2);
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
     margin-bottom: 3rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.2);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    max-height: 70vh;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.article-cover-new {
+    max-width: 100%;
+    max-height: 70vh;
+    display: block;
+    object-fit: contain;
+    transition: opacity 0.5s ease;
 }
 
 .article-content {
@@ -1042,14 +1049,84 @@ body.light-mode .glass-panel {
 
 .modal-content {
     background: var(--bg-surface-elevated);
-    padding: 2.5rem 2rem;
     border-radius: var(--radius-lg);
-    max-width: 420px;
-    width: 90%;
-    text-align: center;
     position: relative;
     border: 1px solid var(--accent);
     box-shadow: 0 0 50px var(--accent-glow);
+    backdrop-filter: blur(10px);
+}
+
+.dossier-card {
+    max-width: 800px;
+    width: 90%;
+    padding: 0;
+    overflow: hidden;
+}
+
+.dossier-layout {
+    display: flex;
+    flex-direction: row;
+}
+
+.dossier-aside {
+    width: 250px;
+    background: rgba(0,0,0,0.3);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.dossier-main {
+    flex: 1;
+    padding: 2.5rem 3rem;
+    text-align: left;
+}
+
+.dossier-avatar-wrapper {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--radius-md);
+    padding: 3px;
+    background: linear-gradient(135deg, var(--accent), transparent);
+    margin-bottom: 1.5rem;
+}
+
+.dossier-avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+}
+
+.dossier-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: var(--accent);
+    opacity: 0.6;
+}
+
+.dossier-header h3 {
+    font-size: 2rem;
+    margin: 0 0 0.2rem 0;
+    color: var(--text-primary);
+}
+
+.dossier-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
+
+.dossier-bio {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0;
 }
 
 .close-modal {
@@ -1578,25 +1655,27 @@ body.light-mode input, body.light-mode textarea, body.light-mode .blog-card, bod
     }
 }
 
+@media (max-width: 768px) {
+    .dossier-layout { flex-direction: column; }
+    .dossier-aside { 
+        width: 100%; 
+        border-right: none; 
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        padding: 2rem;
+    }
+    .dossier-main { 
+        padding: 2rem; 
+        text-align: center;
+    }
+}
+
 @media (max-width: 600px) {
     .app-container { padding: 0 1rem !important; }
-    .article-cover { 
-        min-height: auto;
-        aspect-ratio: auto;
-        height: 200px;
+    .article-cover-container {
+        min-height: 200px;
         margin-bottom: 2rem;
-        border-radius: var(--radius-md);
-        background-size: cover;
     }
     #article-title { font-size: 2.2rem; }
-
-    /* Modal Mobile Optimization */
-    .modal-content {
-        padding: 2rem 1rem !important;
-        width: 95%;
-        max-height: 85vh;
-        overflow-y: auto;
-    }
 
     .close-modal {
         top: 0.5rem;
