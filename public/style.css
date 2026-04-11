@@ -1054,10 +1054,23 @@ body.light-mode .glass-panel {
 .close-modal {
     position: absolute;
     top: 1rem; right: 1rem;
-    font-size: 2rem;
+    width: 35px;
+    height: 35px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
     color: var(--text-secondary);
+    transition: var(--transition-fast);
 }
-.close-modal:hover { color: white; }
+.close-modal:hover { 
+    background: var(--bg-surface-elevated);
+    border-color: var(--accent);
+    color: white; 
+}
 
 .modal-content h2 { margin-bottom: 1rem; }
 .modal-content p { margin-bottom: 2rem; color: var(--text-secondary); }
