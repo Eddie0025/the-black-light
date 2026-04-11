@@ -524,8 +524,9 @@ body.light-mode .blog-card {
     min-height: 250px;
     max-height: 500px;
     border-radius: var(--radius-lg);
-    background: #333;
-    background-size: cover;
+    background: rgba(0,0,0,0.2);
+    background-size: contain;
+    background-repeat: no-repeat;
     background-position: center;
     margin-bottom: 3rem;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -1041,9 +1042,9 @@ body.light-mode .glass-panel {
 
 .modal-content {
     background: var(--bg-surface-elevated);
-    padding: 3rem;
+    padding: 2.5rem 2rem;
     border-radius: var(--radius-lg);
-    max-width: 500px;
+    max-width: 420px;
     width: 90%;
     text-align: center;
     position: relative;
