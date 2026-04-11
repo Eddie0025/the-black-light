@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 const SITE_ORIGIN = 'https://www.theblacklight.blog';
+const SUPABASE_URL = 'https://nxfydodctuvgkgbidfbx.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_Cw6InfjEKF3jLJnc-qGa-Q_uhQu9i9O';
 
 function slugify(text) {
   return (text || '')
@@ -39,26 +41,58 @@ function xmlEscape(value) {
 export default async function handler(_req, res) {
   try {
     const supabase = createClient(
-      'https://nxfydodctuvgkgbidfbx.supabase.co',
-      process.env.SUPABASE_SERVICE_ROLE_KEY || 'sb_publishable_Cw6InfjEKF3jLJnc-qGa-Q_uhQu9i9O'
+      SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY
     );
 
-    let blogsResponse = await supabase
-      .from('blogs')
-      .select('id, title, created_at, updated_at, canonical_override_url')
-      .eq('is_archived', false)
-      .order('id', { ascending: false });
+    let blogs = [];
 
-    if (blogsResponse.error && blogsResponse.error.message.includes('canonical_override_url')) {
-      blogsResponse = await supabase
+    // Try full query first (with canonical_override_url and is_archived)
+    try {
+      const { data, error } = await supabase
         .from('blogs')
-        .select('id, title, created_at, updated_at')
+        .select('id, title, created_at, updated_at, canonical_override_url')
         .eq('is_archived', false)
         .order('id', { ascending: false });
-    }
 
-    if (blogsResponse.error) throw blogsResponse.error;
-    const blogs = blogsResponse.data;
+      if (!error && data) {
+        blogs = data;
+      } else {
+        throw error;
+      }
+    } catch (_e1) {
+      // Fallback: without canonical_override_url
+      try {
+        const { data, error } = await supabase
+          .from('blogs')
+          .select('id, title, created_at, updated_at')
+          .eq('is_archived', false)
+          .order('id', { ascending: false });
+
+        if (!error && data) {
+          blogs = data;
+        } else {
+          throw error;
+        }
+      } catch (_e2) {
+        // Fallback: minimal query (no is_archived filter)
+        try {
+          const { data, error } = await supabase
+            .from('blogs')
+            .select('id, title, created_at, updated_at')
+            .order('id', { ascending: false });
+
+          if (!error && data) {
+            blogs = data;
+          } else {
+            throw error;
+          }
+        } catch (_e3) {
+          // Last resort: just return the homepage
+          blogs = [];
+        }
+      }
+    }
 
     const urls = [
       {
@@ -67,9 +101,9 @@ export default async function handler(_req, res) {
         changefreq: 'daily',
         priority: '1.0'
       },
-      ...(blogs || []).map(post => ({
+      ...blogs.map(post => ({
         loc: buildArticleUrl(post),
-        lastmod: post.updated_at || post.created_at,
+        lastmod: post.updated_at || post.created_at || new Date().toISOString(),
         changefreq: 'weekly',
         priority: '0.8'
       }))
@@ -89,7 +123,16 @@ ${urls.map(url => `  <url>
     res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=900');
     return res.status(200).send(xml);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Unable to generate sitemap' });
+    // Even if everything fails, return a valid sitemap with just the homepage
+    const fallbackXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${SITE_ORIGIN}</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>`;
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    return res.status(200).send(fallbackXml);
   }
 }
