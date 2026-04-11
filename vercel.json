@@ -1,8 +1,9 @@
 {
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "routes": [
+    { "src": "/sitemap.xml", "dest": "/api/sitemap" },
+    { "src": "/admin", "dest": "/admin.html" },
+    { "handle": "filesystem" },
+    { "src": "/article/(.*)", "dest": "/" }
   ]
 }
