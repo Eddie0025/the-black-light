@@ -280,13 +280,13 @@ function openAuthorModal() {
     
     modal.style.display = 'flex';
     setTimeout(() => {
-        modal.classList.add('active');
+        modal.classList.add('show');
     }, 10);
 }
 
 function closeAuthorModal() {
     const modal = document.getElementById('author-modal');
-    modal.classList.remove('active');
+    modal.classList.remove('show');
     setTimeout(() => {
         modal.style.display = 'none';
     }, 300);
