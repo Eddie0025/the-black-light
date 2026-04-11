@@ -272,6 +272,11 @@ async function fetchAuthorProfile() {
     }
 }
 
+function hideFooterAuthorCard() {
+    const card = document.getElementById('footer-author-card');
+    if (card) card.remove();
+}
+
 function openAuthorModal() {
     const modal = document.getElementById('author-modal');
     if (!modal) return;
