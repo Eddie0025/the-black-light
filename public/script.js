@@ -249,6 +249,7 @@ async function fetchAuthorProfile() {
             // Pre-fill the modal
             document.getElementById('modal-author-image').src = globalAuthorProfile.image_url;
             document.getElementById('modal-author-name').innerText = globalAuthorProfile.name;
+            document.getElementById('modal-author-title').innerText = globalAuthorProfile.title || 'Analyst';
             document.getElementById('modal-author-bio').innerText = globalAuthorProfile.bio;
         }
     } catch (e) {
@@ -258,10 +259,20 @@ async function fetchAuthorProfile() {
 
 function openAuthorModal() {
     const modal = document.getElementById('author-modal');
+    if (!modal) return;
+    
+    // Ensure data is set if they click before pre-fill or cache updates
+    if (globalAuthorProfile) {
+        document.getElementById('modal-author-image').src = globalAuthorProfile.image_url;
+        document.getElementById('modal-author-name').innerText = globalAuthorProfile.name;
+        document.getElementById('modal-author-title').innerText = globalAuthorProfile.title || 'Analyst';
+        document.getElementById('modal-author-bio').innerText = globalAuthorProfile.bio;
+    }
+    
     modal.style.display = 'flex';
-    requestAnimationFrame(() => {
+    setTimeout(() => {
         modal.classList.add('active');
-    });
+    }, 10);
 }
 
 function closeAuthorModal() {
@@ -441,6 +452,7 @@ async function fetchArticle(id, pushHistory = true) {
         if (authorBioCard && globalAuthorProfile) {
             document.getElementById('inline-author-image').src = globalAuthorProfile.image_url;
             document.getElementById('inline-author-name').innerText = globalAuthorProfile.name;
+            document.getElementById('inline-author-title').innerText = globalAuthorProfile.title || 'Analyst';
             document.getElementById('inline-author-bio').innerText = globalAuthorProfile.bio;
             authorBioCard.style.display = 'flex';
         } else if (authorBioCard) {

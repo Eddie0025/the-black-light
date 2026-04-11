@@ -535,6 +535,7 @@ async function loadAuthorProfileEditor() {
         }
 
         document.getElementById('author-name').value = profile.name || '';
+        document.getElementById('author-title').value = profile.title || '';
         document.getElementById('author-image-url').value = profile.image_url || '';
         document.getElementById('author-bio').value = profile.bio || '';
     } catch (e) {
@@ -548,12 +549,13 @@ async function saveAuthorProfile(e) {
     if (!btn) return;
 
     const name = document.getElementById('author-name').value.trim();
+    const title = document.getElementById('author-title').value.trim();
     let image_url = document.getElementById('author-image-url').value.trim();
     const bio = document.getElementById('author-bio').value.trim();
     const fileInput = document.getElementById('author-image-file');
 
-    if (!name || (!image_url && (!fileInput || !fileInput.files[0])) || !bio) {
-        showToast("Name, bio, and either an image URL or uploaded file are required.");
+    if (!name || !title || (!image_url && (!fileInput || !fileInput.files[0])) || !bio) {
+        showToast("Name, title, bio, and either an image URL or uploaded file are required.");
         return;
     }
 
@@ -582,7 +584,7 @@ async function saveAuthorProfile(e) {
             document.getElementById('author-image-url').value = image_url;
         }
 
-        const payload = JSON.stringify({ name, image_url, bio });
+        const payload = JSON.stringify({ name, title, image_url, bio });
 
         const { data: sessionData } = await supabase.auth.getSession();
         const userId = sessionData?.session?.user?.id || null;
