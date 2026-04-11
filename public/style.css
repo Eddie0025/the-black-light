@@ -20,6 +20,39 @@
     100% { background-position: 200% 0; }
 }
 
+/* Illumination Opening Effect */
+#illumination-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 2vmin;
+    height: 2vmin;
+    background: transparent;
+    border-radius: 50%;
+    box-shadow: 0 0 0 200vmax #040405; /* Blackest shade */
+    z-index: 999999;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0);
+    animation: illuminate-bulb 2.8s cubic-bezier(0.5, 0, 0.1, 1) forwards;
+}
+
+@keyframes illuminate-bulb {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+    }
+    20% {
+        transform: translate(-50%, -50%) scale(1.5);
+        box-shadow: 0 0 0 200vmax #040405, 0 0 50px 20px rgba(192, 132, 252, 0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(300);
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
 
 :root {
     --bg-base: #08080a;           /* Richer charcoal */
