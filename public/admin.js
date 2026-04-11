@@ -246,6 +246,15 @@ function initFileUploadListener() {
         });
     }
 
+    const authorFileInput = document.getElementById('author-image-file');
+    const authorLabel = document.getElementById('author-file-name-label');
+    if (authorFileInput && authorLabel) {
+        authorFileInput.addEventListener('change', (e) => {
+            const fileName = e.target.files[0]?.name || "No file chosen";
+            authorLabel.innerText = fileName;
+        });
+    }
+
     const docxInput = document.getElementById('docx-upload');
     if (docxInput) {
         docxInput.addEventListener('change', (e) => {
@@ -539,20 +548,42 @@ async function saveAuthorProfile(e) {
     if (!btn) return;
 
     const name = document.getElementById('author-name').value.trim();
-    const image_url = document.getElementById('author-image-url').value.trim();
+    let image_url = document.getElementById('author-image-url').value.trim();
     const bio = document.getElementById('author-bio').value.trim();
+    const fileInput = document.getElementById('author-image-file');
 
-    if (!name || !image_url || !bio) {
-        showToast("All author fields are required.");
+    if (!name || (!image_url && (!fileInput || !fileInput.files[0])) || !bio) {
+        showToast("Name, bio, and either an image URL or uploaded file are required.");
         return;
     }
 
-    const payload = JSON.stringify({ name, image_url, bio });
     const originalText = btn.innerText;
     btn.disabled = true;
     btn.innerText = 'Saving...';
 
     try {
+        if (fileInput && fileInput.files[0]) {
+            const file = fileInput.files[0];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `author-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+            const filePath = `covers/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('blog-covers')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: publicUrlData } = supabase.storage
+                .from('blog-covers')
+                .getPublicUrl(filePath);
+            
+            image_url = publicUrlData.publicUrl;
+            document.getElementById('author-image-url').value = image_url;
+        }
+
+        const payload = JSON.stringify({ name, image_url, bio });
+
         const { data: sessionData } = await supabase.auth.getSession();
         const userId = sessionData?.session?.user?.id || null;
 

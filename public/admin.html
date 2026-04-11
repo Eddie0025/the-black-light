@@ -72,8 +72,8 @@
                         <button class="sidebar-btn" onclick="switchTab('comments')">💬 Comments</button>
                         <button class="sidebar-btn" onclick="switchTab('subscribers')">👥 Subscribers</button>
                         
-                        <button class="nav-btn" data-tab="privacy" onclick="switchTab('privacy')">📝 Privacy Policy</button>
-                        <button class="nav-btn" data-tab="author" onclick="switchTab('author')">👤 Author Setup</button>
+                        <button class="sidebar-btn" data-tab="privacy" onclick="switchTab('privacy')">📝 Privacy Policy</button>
+                        <button class="sidebar-btn" data-tab="author" onclick="switchTab('author')">👤 Author Setup</button>
                         <button class="logout-btn" onclick="handleLogout()" style="width: 100%; text-align: left; background: transparent; margin-top: auto;">🚪 Logout</button>
                     </aside>
 
@@ -318,9 +318,14 @@
                                     <input type="text" id="author-name" placeholder="E.g., The Black Light" required/>
                                 </div>
                                 <div class="form-group">
-                                    <label>Profile Image URL</label>
-                                    <input type="url" id="author-image-url" placeholder="https://... image link" required/>
-                                    <small class="field-note">Paste a link to your author logo or headshot.</small>
+                                    <label>Profile Image</label>
+                                    <div style="display: flex; gap: 1rem; align-items: center;">
+                                        <input type="file" id="author-image-file" accept="image/*" style="display: none;"/>
+                                        <button type="button" class="nav-btn" onclick="document.getElementById('author-image-file').click()" style="width: auto;">📁 Choose from Device</button>
+                                        <span id="author-file-name-label" style="font-size: 0.85rem; color: var(--text-secondary);">No file chosen</span>
+                                    </div>
+                                    <input type="url" id="author-image-url" placeholder="...or enter an Image URL" style="margin-top: 1rem;"/>
+                                    <small class="field-note">Upload an image from your device or paste a URL link.</small>
                                 </div>
                                 <div class="form-group">
                                     <label>Professional Bio</label>
