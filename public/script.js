@@ -246,46 +246,10 @@ async function fetchAuthorProfile() {
 
         if (data && data.content) {
             globalAuthorProfile = JSON.parse(data.content);
-            // Pre-fill the modal
-            document.getElementById('modal-author-image').src = globalAuthorProfile.image_url || 'black_light_logo.png';
-            document.getElementById('modal-author-name').innerText = globalAuthorProfile.name || 'Author';
-            document.getElementById('modal-author-title').innerText = globalAuthorProfile.title || 'Author';
-            document.getElementById('modal-author-bio').innerText = globalAuthorProfile.bio || '';
         }
     } catch (e) {
         console.error("Error fetching author profile:", e);
     }
-}
-
-function openAuthorModal() {
-    const modal = document.getElementById('author-modal');
-    if (!modal) return;
-    
-    // Ensure data is set if they click before pre-fill or cache updates
-    if (globalAuthorProfile) {
-        document.getElementById('modal-author-image').src = globalAuthorProfile.image_url || 'black_light_logo.png';
-        document.getElementById('modal-author-name').innerText = globalAuthorProfile.name || 'Author';
-        document.getElementById('modal-author-title').innerText = globalAuthorProfile.title || 'Author';
-        document.getElementById('modal-author-bio').innerText = globalAuthorProfile.bio || '';
-    } else {
-        document.getElementById('modal-author-image').src = 'black_light_logo.png';
-        document.getElementById('modal-author-name').innerText = 'The Black Light';
-        document.getElementById('modal-author-title').innerText = 'Author';
-        document.getElementById('modal-author-bio').innerText = 'Information about the author will be displayed here.';
-    }
-    
-    modal.style.display = 'flex';
-    setTimeout(() => {
-        modal.classList.add('active');
-    }, 10);
-}
-
-function closeAuthorModal() {
-    const modal = document.getElementById('author-modal');
-    modal.classList.remove('active');
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 300);
 }
 
 // =================== ARTICLE FETCHING ===================

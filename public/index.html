@@ -72,9 +72,6 @@
                 <button type="button" class="category-chip" data-category="Technology" onclick="loadCategory('Technology')">Technology</button>
             </div>
             <div class="nav-actions">
-                <button class="nav-btn" onclick="openAuthorModal()" title="About the Author" style="display: flex; align-items: center; gap: 0.5rem; background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: var(--radius-full); padding: 0.5rem 1rem;">
-                    <span class="icon">ℹ️</span> <span style="font-size: 0.9rem; font-weight: 500;">About</span>
-                </button>
                 <button class="nav-btn theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode">
                     <span class="icon">🌓</span>
                 </button>
@@ -173,17 +170,6 @@
             </article>
         </section>
     </main>
-
-    <!-- About Author Modal -->
-    <div id="author-modal" class="modal-overlay" onclick="closeAuthorModal()">
-        <div class="modal-content animate-scale" onclick="event.stopPropagation()" style="max-width: 450px; text-align: center; padding: 3rem 2rem;">
-            <button class="close-modal" onclick="closeAuthorModal()">&times;</button>
-            <img id="modal-author-image" src="" alt="Author Profile" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto 1.5rem; border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent-glow);"/>
-            <h3 id="modal-author-name" style="font-size: 1.8rem; margin-bottom: 0.2rem; color: var(--text-primary);">Author Profile</h3>
-            <div id="modal-author-title" style="font-size: 1rem; color: var(--accent); margin-bottom: 1rem; font-weight: 600;"></div>
-            <p id="modal-author-bio" style="font-size: 1rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;"></p>
-        </div>
-    </div>
 
     <!-- Social Share Modal -->
     <div id="share-modal" class="modal-overlay" onclick="closeShareModal()">
