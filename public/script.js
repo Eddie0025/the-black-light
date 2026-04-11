@@ -4,7 +4,7 @@ let allBlogs = [];
 let currentPage = 1;
 let activeCategory = null;
 const pageSize = 5;
-const SITE_ORIGIN = 'https://theblacklight.blog';
+const SITE_ORIGIN = 'https://www.theblacklight.blog';
 
 // URL Slug Helper
 function slugify(text) {

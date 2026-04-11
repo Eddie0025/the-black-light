@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-const SITE_ORIGIN = 'https://theblacklight.blog';
+const SITE_ORIGIN = 'https://www.theblacklight.blog';
 
 function slugify(text) {
   return (text || '')

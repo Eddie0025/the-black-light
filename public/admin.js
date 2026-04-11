@@ -1,12 +1,13 @@
 let editingBlogId = null;
 let authReady = false;
-const SITE_ORIGIN = 'https://theblacklight.blog';
+let canonicalUserEdited = false;
+const SITE_ORIGIN = 'https://www.theblacklight.blog';
 const PRIVACY_CONTENT_KEY = 'privacy_policy';
 const DEFAULT_PRIVACY_POLICY = `Privacy Policy
 Effective Date: April 11, 2026
 Last Updated: April 11, 2026
 
-At The Black Light, accessible from https://theblacklight.blog, one of our main priorities is the privacy of our visitors.`;
+At The Black Light, accessible from https://www.theblacklight.blog, one of our main priorities is the privacy of our visitors.`;
 
 function slugify(text) {
     return (text || '')
@@ -75,7 +76,7 @@ function refreshSeoPreview() {
     const overrideValue = normalizeCanonicalOverride(document.getElementById('seo-canonical-override')?.value || '');
     const generatedCanonical = buildCanonicalUrl(editingBlogId, title);
 
-    if (previewField) {
+    if (previewField && !canonicalUserEdited) {
         previewField.value = overrideValue || generatedCanonical || '';
     }
 
@@ -100,6 +101,14 @@ function bindSeoInputs() {
     if (overrideInput) overrideInput.addEventListener('input', refreshSeoPreview);
     if (seoTitleInput) seoTitleInput.addEventListener('input', updateSeoCounters);
     if (seoDescriptionInput) seoDescriptionInput.addEventListener('input', updateSeoCounters);
+
+    const canonicalPreviewInput = document.getElementById('seo-canonical-preview');
+    if (canonicalPreviewInput) {
+        canonicalPreviewInput.addEventListener('input', () => {
+            canonicalUserEdited = true;
+            refreshSeoPreview();
+        });
+    }
 }
 
 function bindPrivacyEditor() {
@@ -716,7 +725,8 @@ async function editHubArticle(id) {
         editorTextarea.value = blog.content;
         document.getElementById('seo-title').value = blog.seo_title || '';
         document.getElementById('seo-description').value = blog.meta_description || '';
-        document.getElementById('seo-canonical-override').value = blog.canonical_override_url || '';
+        document.getElementById('seo-canonical-preview').value = blog.canonical_override_url || buildCanonicalUrl(id, blog.title);
+        if (blog.canonical_override_url) canonicalUserEdited = true;
         
         // Load stats visibility
         document.getElementById('show-stats').checked = blog.show_stats !== false;
@@ -748,6 +758,7 @@ function cancelEditing() {
     document.getElementById('seo-description').value = '';
     document.getElementById('seo-canonical-override').value = '';
     switchEditorTab('content');
+    canonicalUserEdited = false;
     updateSeoCounters();
     refreshSeoPreview();
     
@@ -835,7 +846,13 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     let content = document.getElementById('new-blog-content').value;
     const seoTitle = document.getElementById('seo-title').value.trim();
     const metaDescription = document.getElementById('seo-description').value.trim();
-    const canonicalOverride = normalizeCanonicalOverride(document.getElementById('seo-canonical-override').value);
+    
+    // Use the potentially edited preview field as the source for the canonical URL
+    const canonicalValue = document.getElementById('seo-canonical-preview').value.trim();
+    const generatedUrl = buildCanonicalUrl(editingBlogId, title);
+    const canonicalOverride = (canonicalValue && canonicalValue !== generatedUrl) 
+        ? normalizeCanonicalOverride(canonicalValue) 
+        : normalizeCanonicalOverride(document.getElementById('seo-canonical-override').value);
     
     try {
         if (fileInput && fileInput.files[0]) {

@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /admin.html
 
-Sitemap: https://theblacklight.blog/sitemap.xml
+Sitemap: https://www.theblacklight.blog/sitemap.xml

@@ -19,6 +19,18 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Incomplete record data' });
   }
 
+  const slugify = (text) => (text || '')
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+
+  const reportUrl = `https://www.theblacklight.blog/article/${id}-${slugify(title)}`;
+
   try {
     // 1. Fetch all subscribers
     const { data: subscribers, error: subError } = await supabase
@@ -33,7 +45,7 @@ export default async function handler(req, res) {
     // 2. Blast the intelligence alert (Individual sends for privacy and unsubscribe links)
     const results = await Promise.all(subscribers.map(sub => 
       resend.emails.send({
-        from: 'The Black Light <briefings@theblacklight.blog>',
+        from: 'The Black Light <briefings@www.theblacklight.blog>',
         to: [sub.email],
         reply_to: 'theblacklighttt@gmail.com',
         subject: `BRIEFING: ${title} | The Black Light`,
@@ -57,7 +69,7 @@ export default async function handler(req, res) {
               <p style="margin-bottom: 12px;">This document is intended for the registered recipient. Confidentiality and strategic discretion are advised.</p>
               <p style="margin-bottom: 12px; text-transform: uppercase;">&copy; 2026 The Black Light | Global Strategy & Macro Analysis</p>
               <p style="margin: 0;">
-                <a href="https://theblacklight.blog/unsubscribe.html?email=${encodeURIComponent(sub.email)}" style="color: #64748b; text-decoration: underline;">Unsubscribe from network</a>
+                <a href="https://www.theblacklight.blog/unsubscribe.html?email=${encodeURIComponent(sub.email)}" style="color: #64748b; text-decoration: underline;">Unsubscribe from network</a>
               </p>
             </div>
           </div>

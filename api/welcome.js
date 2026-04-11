@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   try {
     const data = await resend.emails.send({
-      from: 'The Black Light <briefings@theblacklight.blog>',
+      from: 'The Black Light <briefings@www.theblacklight.blog>',
       to: [email],
       reply_to: 'theblacklighttt@gmail.com',
       subject: 'Subscription Confirmed | The Black Light',
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
           <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #1a1a20;">
             <p style="font-size: 12px; color: #475569; margin: 0; line-height: 1.6;">
               &copy; 2026 The Black Light | Analytical Intelligence & Strategy<br>
-              <a href="https://theblacklight.blog/unsubscribe.html?email=${encodeURIComponent(email)}" style="color: #64748b; text-decoration: underline; margin-top: 8px; display: inline-block;">Unsubscribe from our network</a>
+              <a href="https://www.theblacklight.blog/unsubscribe.html?email=${encodeURIComponent(email)}" style="color: #64748b; text-decoration: underline; margin-top: 8px; display: inline-block;">Unsubscribe from our network</a>
             </p>
           </div>
 
