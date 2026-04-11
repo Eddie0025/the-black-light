@@ -20,36 +20,65 @@
     100% { background-position: 200% 0; }
 }
 
-/* Illumination Opening Effect */
+/* Authentic Atmospheric Bulb Illumination */
 #illumination-overlay {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 2vmin;
-    height: 2vmin;
-    background: transparent;
-    border-radius: 50%;
-    box-shadow: 0 0 0 200vmax #040405; /* Blackest shade */
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #040405; /* Pitch black start */
     z-index: 999999;
     pointer-events: none;
-    transform: translate(-50%, -50%) scale(0);
-    animation: illuminate-bulb 2.8s cubic-bezier(0.5, 0, 0.1, 1) forwards;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: bulb-room-light 4.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
 
-@keyframes illuminate-bulb {
+/* Central glowing filament reflection that blooms outwards */
+#illumination-overlay::after {
+    content: '';
+    position: absolute;
+    width: 50vw;
+    height: 50vh;
+    background: radial-gradient(circle at center, rgba(192, 132, 252, 0.4) 0%, transparent 60%);
+    opacity: 0;
+    transform: scale(0.5);
+    animation: bulb-filament-bloom 4.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes bulb-room-light {
     0% {
-        transform: translate(-50%, -50%) scale(0);
+        background: rgba(4, 4, 5, 1);
         opacity: 1;
     }
-    20% {
-        transform: translate(-50%, -50%) scale(1.5);
-        box-shadow: 0 0 0 200vmax #040405, 0 0 50px 20px rgba(192, 132, 252, 0.8);
+    15% {
+        /* Initial ignition - still dark, but environment catches a hint of light */
+        background: rgba(15, 8, 25, 0.95);
+        opacity: 1;
+    }
+    50% {
+        /* Soft, steady warm up */
+        background: rgba(15, 8, 25, 0.5);
         opacity: 1;
     }
     100% {
-        transform: translate(-50%, -50%) scale(300);
+        background: rgba(15, 8, 25, 0);
         opacity: 0;
         visibility: hidden;
+    }
+}
+
+@keyframes bulb-filament-bloom {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    15% {
+        opacity: 1;
+        transform: scale(1.5); /* Ignites and spreads quickly to the room */
+    }
+    100% {
+        opacity: 0;
+        transform: scale(4); /* Diffuses entirely as the room reaches full brightness */
     }
 }
 
