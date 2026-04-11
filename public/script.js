@@ -140,6 +140,15 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Initial Home/Category SEO
     updateHomeSEO(categoryParam);
+    
+    // Cleanup Illumination Overlay for mobile/performance stability
+    const overlay = document.getElementById('illumination-overlay');
+    if (overlay) {
+        overlay.addEventListener('animationend', () => overlay.remove());
+        // Fallback: Force remove after 5 seconds if animationend fails
+        setTimeout(() => overlay.remove(), 5000);
+    }
+
     trackView(); 
 });
 
