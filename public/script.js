@@ -904,6 +904,6 @@ function updateHomeSEO(category = null) {
 // Hook reset into navigation - Fix: Properly spread arguments to avoid losing data like article ID
 const originalNavigateTo = navigateTo;
 navigateTo = function(...args) {
-    if (args[0] === 'home') resetSEO();
+    if (args[0] === 'home') updateHomeSEO(activeCategory);
     originalNavigateTo(...args);
 };
