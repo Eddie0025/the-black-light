@@ -1566,4 +1566,10 @@ body.light-mode input, body.light-mode textarea, body.light-mode .blog-card, bod
 
 @media (max-width: 600px) {
     .app-container { padding: 0 1rem !important; }
+    .article-cover { 
+        min-height: 180px; 
+        margin-bottom: 2rem;
+        border-radius: var(--radius-md);
+    }
+    #article-title { font-size: 2.2rem; }
 }
