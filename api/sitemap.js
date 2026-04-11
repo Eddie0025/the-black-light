@@ -40,7 +40,7 @@ export default async function handler(_req, res) {
   try {
     const supabase = createClient(
       'https://nxfydodctuvgkgbidfbx.supabase.co',
-      process.env.SUPABASE_SERVICE_ROLE_KEY
+      process.env.SUPABASE_SERVICE_ROLE_KEY || 'sb_publishable_Cw6InfjEKF3jLJnc-qGa-Q_uhQu9i9O'
     );
 
     let blogsResponse = await supabase
