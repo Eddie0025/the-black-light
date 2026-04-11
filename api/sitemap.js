@@ -46,6 +46,7 @@ export default async function handler(_req, res) {
     );
 
     let blogs = [];
+    let debugErrors = [];
 
     // Try full query first (with canonical_override_url and is_archived)
     try {
@@ -58,6 +59,7 @@ export default async function handler(_req, res) {
       if (!error && data) {
         blogs = data;
       } else {
+        debugErrors.push('Q1: ' + (error?.message || 'no data'));
         throw error;
       }
     } catch (_e1) {
@@ -72,6 +74,7 @@ export default async function handler(_req, res) {
         if (!error && data) {
           blogs = data;
         } else {
+          debugErrors.push('Q2: ' + (error?.message || 'no data'));
           throw error;
         }
       } catch (_e2) {
@@ -85,9 +88,11 @@ export default async function handler(_req, res) {
           if (!error && data) {
             blogs = data;
           } else {
+            debugErrors.push('Q3: ' + (error?.message || 'no data'));
             throw error;
           }
         } catch (_e3) {
+          debugErrors.push('Q3 catch: ' + (_e3?.message || 'unknown'));
           // Last resort: just return the homepage
           blogs = [];
         }
@@ -110,6 +115,7 @@ export default async function handler(_req, res) {
     ];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<!-- debug: found=${blogs.length} errors=${JSON.stringify(debugErrors)} -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(url => `  <url>
     <loc>${xmlEscape(url.loc)}</loc>
