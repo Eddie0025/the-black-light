@@ -138,6 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
         fetchBlogs();
     }
     
+    // Initial Home/Category SEO
+    updateHomeSEO(categoryParam);
     trackView(); 
 });
 
@@ -314,6 +316,7 @@ async function fetchBlogs(category = null) {
         updateCategoryChips();
         
         renderHomeFeed();
+        updateHomeSEO(activeCategory);
     } catch (e) {
         console.error(e);
     }
@@ -813,81 +816,78 @@ function updateSEO(post) {
     const imageUrl = post.cover_image || `${SITE_ORIGIN}/black_light_logo.png`;
 
     document.title = `${seoTitle} | The Black Light`;
-    const metaDesc = document.getElementById('meta-desc');
-    if (metaDesc) metaDesc.setAttribute('content', description);
+    
+    const setMeta = (id, attr, value) => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute(attr, value);
+    };
 
-    // Dynamic Keywords
-    const metaKeywords = document.getElementById('meta-keywords');
-    if (metaKeywords) metaKeywords.setAttribute('content', getDynamicKeywords(post));
-
+    setMeta('meta-desc', 'content', description);
+    setMeta('meta-keywords', 'content', getDynamicKeywords(post));
+    
     // OpenGraph
-    const ogTitle = document.getElementById('og-title');
-    const ogDesc = document.getElementById('og-desc');
-    const ogImage = document.getElementById('og-image');
-    const ogUrl = document.getElementById('og-url');
-    const ogType = document.getElementById('og-type');
-    if (ogTitle) ogTitle.setAttribute('content', seoTitle);
-    if (ogDesc) ogDesc.setAttribute('content', description);
-    if (ogImage) ogImage.setAttribute('content', imageUrl);
-    if (ogUrl) ogUrl.setAttribute('content', canonicalUrl);
-    if (ogType) ogType.setAttribute('content', 'article');
+    setMeta('og-title', 'content', `${seoTitle} | The Black Light`);
+    setMeta('og-desc', 'content', description);
+    setMeta('og-image', 'content', imageUrl);
+    setMeta('og-url', 'content', canonicalUrl);
+    setMeta('og-type', 'content', 'article');
 
-    // Twitter / X Card
-    const twitterTitle = document.getElementById('twitter-title');
-    const twitterDesc = document.getElementById('twitter-desc');
-    const twitterImage = document.getElementById('twitter-image');
-    const twitterCard = document.getElementById('twitter-card');
-    if (twitterTitle) twitterTitle.setAttribute('content', seoTitle);
-    if (twitterDesc) twitterDesc.setAttribute('content', description);
-    if (twitterImage) twitterImage.setAttribute('content', imageUrl);
-    if (twitterCard) twitterCard.setAttribute('content', 'summary_large_image');
+    // Twitter
+    setMeta('twitter-title', 'content', `${seoTitle} | The Black Light`);
+    setMeta('twitter-desc', 'content', description);
+    setMeta('twitter-image', 'content', imageUrl);
+    setMeta('twitter-card', 'content', 'summary_large_image');
 
     // Canonical
     const canonical = document.getElementById('canonical-url');
     if (canonical) canonical.setAttribute('href', canonicalUrl);
 
-    // Structured Data
     updateArticleSchema(post, canonicalUrl, description, seoTitle);
     updateBreadcrumbSchema(post, canonicalUrl);
 }
 
-function resetSEO() {
-    document.title = "The Black Light | Professional Intelligence & Insights";
-    const defaultDesc = "Deep-dive analysis on global macroeconomics, energy markets, and international policy.";
-    const defaultTitle = "The Black Light | Professional Intelligence";
+function updateHomeSEO(category = null) {
+    const baseTitle = "The Black Light | Professional Intelligence & Insights";
+    const baseDesc = "Deep-dive analysis on global macroeconomics, energy markets, and international policy. Illuminating the unseen patterns in global affairs.";
     const defaultImage = `${SITE_ORIGIN}/black_light_logo.png`;
+    
+    let title = baseTitle;
+    let desc = baseDesc;
+    let url = SITE_ORIGIN + "/";
 
-    const metaDesc = document.getElementById('meta-desc');
-    if (metaDesc) metaDesc.setAttribute('content', defaultDesc);
+    if (category) {
+        title = `${category} Intelligence | The Black Light`;
+        desc = `Explore professional insights and analysis on ${category} from The Black Light.`;
+        url = `${SITE_ORIGIN}/?category=${encodeURIComponent(category)}`;
+    }
 
-    // Reset Keywords
-    const metaKeywords = document.getElementById('meta-keywords');
-    if (metaKeywords) metaKeywords.setAttribute('content', 'blog, intelligence, macroeconomics, policy, energy, professional insights, global markets, geopolitics, economics, analysis');
+    document.title = title;
 
-    // Reset OpenGraph
-    const ogTitle = document.getElementById('og-title');
-    const ogDesc = document.getElementById('og-desc');
-    const ogImage = document.getElementById('og-image');
-    const ogUrl = document.getElementById('og-url');
-    const ogType = document.getElementById('og-type');
-    if (ogTitle) ogTitle.setAttribute('content', defaultTitle);
-    if (ogDesc) ogDesc.setAttribute('content', defaultDesc);
-    if (ogImage) ogImage.setAttribute('content', defaultImage);
-    if (ogUrl) ogUrl.setAttribute('content', SITE_ORIGIN);
-    if (ogType) ogType.setAttribute('content', 'website');
+    const setMeta = (id, attr, value) => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute(attr, value);
+    };
 
-    // Reset Twitter / X Card
-    const twitterTitle = document.getElementById('twitter-title');
-    const twitterDesc = document.getElementById('twitter-desc');
-    const twitterImage = document.getElementById('twitter-image');
-    if (twitterTitle) twitterTitle.setAttribute('content', defaultTitle);
-    if (twitterDesc) twitterDesc.setAttribute('content', defaultDesc);
-    if (twitterImage) twitterImage.setAttribute('content', defaultImage);
+    setMeta('meta-desc', 'content', desc);
+    setMeta('meta-keywords', 'content', 'blog, intelligence, macroeconomics, policy, energy, professional insights, global markets, geopolitics, economics, analysis');
+    
+    // OpenGraph
+    setMeta('og-title', 'content', title);
+    setMeta('og-desc', 'content', desc);
+    setMeta('og-image', 'content', defaultImage);
+    setMeta('og-url', 'content', url);
+    setMeta('og-type', 'content', 'website');
 
-    // Reset Canonical
+    // Twitter
+    setMeta('twitter-title', 'content', title);
+    setMeta('twitter-desc', 'content', desc);
+    setMeta('twitter-image', 'content', defaultImage);
+
+    // Canonical
     const canonical = document.getElementById('canonical-url');
-    if (canonical) canonical.setAttribute('href', SITE_ORIGIN);
+    if (canonical) canonical.setAttribute('href', url);
 
+    // Clean up schemas for home page
     clearArticleSchema();
     clearBreadcrumbSchema();
 }
