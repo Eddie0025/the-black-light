@@ -74,9 +74,7 @@
                         
                         <button class="nav-btn" data-tab="privacy" onclick="switchTab('privacy')">📝 Privacy Policy</button>
                         <button class="nav-btn" data-tab="author" onclick="switchTab('author')">👤 Author Setup</button>
-                        <a href="/" class="nav-btn" target="_blank" style="margin-top: auto;">🌐 View Live Site</a>
-                            <button class="logout-btn" onclick="handleLogout()" style="width: 100%; text-align: left; background: transparent;">🚪 Logout</button>
-                        </div>
+                        <button class="logout-btn" onclick="handleLogout()" style="width: 100%; text-align: left; background: transparent; margin-top: auto;">🚪 Logout</button>
                     </aside>
 
                     <!-- Main Dashboard Area -->
@@ -306,7 +304,7 @@
                             <div class="form-group" style="display: flex; gap: 1rem; align-items: center;">
                                 <button type="button" class="submit-btn box-glow" id="save-privacy-btn" style="width: auto;">Save Privacy Policy</button>
                                 <span id="privacy-saved-meta" class="field-note"></span>
-                            </form>
+                            </div>
                         </div>
 
                         <!-- TAB: Author Setup -->
@@ -336,8 +334,6 @@
 
                     </div>
                 </div>
-
-            </div>
         </section>
 
     </main>
