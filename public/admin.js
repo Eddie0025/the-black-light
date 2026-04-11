@@ -3,6 +3,7 @@ let authReady = false;
 let canonicalUserEdited = false;
 const SITE_ORIGIN = 'https://www.theblacklight.blog';
 const PRIVACY_CONTENT_KEY = 'privacy_policy';
+const AUTHOR_CONTENT_KEY = 'author_profile';
 const DEFAULT_PRIVACY_POLICY = `Privacy Policy
 Effective Date: April 11, 2026
 Last Updated: April 11, 2026
@@ -426,6 +427,7 @@ function switchTab(tabId) {
     if (tabId === 'subscribers') fetchHubSubscribers();
     if (tabId === 'analytics') fetchHubStats();
     if (tabId === 'privacy') loadPrivacyPolicyEditor();
+    if (tabId === 'author') loadAuthorProfileEditor();
 }
 
 async function initHub() {
@@ -503,6 +505,72 @@ async function savePrivacyPolicy() {
     } finally {
         saveBtn.disabled = false;
         saveBtn.innerText = originalText;
+    }
+}
+
+async function loadAuthorProfileEditor() {
+    try {
+        const { data, error } = await supabase
+            .from('site_content')
+            .select('content')
+            .eq('key', AUTHOR_CONTENT_KEY)
+            .maybeSingle();
+
+        if (error) throw error;
+        
+        let profile = {};
+        try {
+            profile = data?.content ? JSON.parse(data.content) : {};
+        } catch (e) {
+            console.error("Invalid author profile JSON in DB", e);
+        }
+
+        document.getElementById('author-name').value = profile.name || '';
+        document.getElementById('author-image-url').value = profile.image_url || '';
+        document.getElementById('author-bio').value = profile.bio || '';
+    } catch (e) {
+        showToast("Could not load author profile. Run migrations if necessary.");
+    }
+}
+
+async function saveAuthorProfile(e) {
+    if (e) e.preventDefault();
+    const btn = document.querySelector('#author-settings-form .submit-btn');
+    if (!btn) return;
+
+    const name = document.getElementById('author-name').value.trim();
+    const image_url = document.getElementById('author-image-url').value.trim();
+    const bio = document.getElementById('author-bio').value.trim();
+
+    if (!name || !image_url || !bio) {
+        showToast("All author fields are required.");
+        return;
+    }
+
+    const payload = JSON.stringify({ name, image_url, bio });
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerText = 'Saving...';
+
+    try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const userId = sessionData?.session?.user?.id || null;
+
+        const { error } = await supabase
+            .from('site_content')
+            .upsert([{
+                key: AUTHOR_CONTENT_KEY,
+                content: payload,
+                updated_by: userId
+            }], { onConflict: 'key' });
+
+        if (error) throw error;
+        showToast("Global Author Profile updated!");
+    } catch (e) {
+        showToast("Save failed: " + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = originalText;
     }
 }
 

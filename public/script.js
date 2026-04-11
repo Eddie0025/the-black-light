@@ -3,6 +3,7 @@ let userLikeState = null;
 let allBlogs = [];
 let currentPage = 1;
 let activeCategory = null;
+let globalAuthorProfile = null;
 const pageSize = 5;
 const SITE_ORIGIN = 'https://www.theblacklight.blog';
 
@@ -112,6 +113,7 @@ window.addEventListener('scroll', () => {
 document.addEventListener("DOMContentLoaded", () => {
     initTheme();
     renderSkeletons();
+    fetchAuthorProfile();
     
     // Process URL parameters for deep-linking
     const urlParams = new URLSearchParams(window.location.search);
@@ -233,8 +235,44 @@ function navigateTo(viewId, pushHistory = true, extraData = {}, mode = 'push') {
     }
 }
 
-// ---- Data Fetching ----
+// =================== AUTHOR PROFILE ===================
+async function fetchAuthorProfile() {
+    try {
+        const { data, error } = await supabase
+            .from('site_content')
+            .select('content')
+            .eq('key', 'author_profile')
+            .maybeSingle();
 
+        if (data && data.content) {
+            globalAuthorProfile = JSON.parse(data.content);
+            // Pre-fill the modal
+            document.getElementById('modal-author-image').src = globalAuthorProfile.image_url;
+            document.getElementById('modal-author-name').innerText = globalAuthorProfile.name;
+            document.getElementById('modal-author-bio').innerText = globalAuthorProfile.bio;
+        }
+    } catch (e) {
+        console.error("Error fetching author profile:", e);
+    }
+}
+
+function openAuthorModal() {
+    const modal = document.getElementById('author-modal');
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => {
+        modal.classList.add('active');
+    });
+}
+
+function closeAuthorModal() {
+    const modal = document.getElementById('author-modal');
+    modal.classList.remove('active');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
+// =================== ARTICLE FETCHING ===================
 async function fetchBlogs(category = null) {
     try {
         activeCategory = category ? category.trim() : null;
@@ -398,6 +436,17 @@ async function fetchArticle(id, pushHistory = true) {
         if (skeletonTitle) skeletonTitle.style.display = 'none';
         if (skeletonMeta) skeletonMeta.style.display = 'none';
         
+        // Inject global author info at the end of the article
+        const authorBioCard = document.getElementById('article-author-bio');
+        if (authorBioCard && globalAuthorProfile) {
+            document.getElementById('inline-author-image').src = globalAuthorProfile.image_url;
+            document.getElementById('inline-author-name').innerText = globalAuthorProfile.name;
+            document.getElementById('inline-author-bio').innerText = globalAuthorProfile.bio;
+            authorBioCard.style.display = 'flex';
+        } else if (authorBioCard) {
+            authorBioCard.style.display = 'none';
+        }
+
         const metaWrapper = document.getElementById('article-meta');
         if (metaWrapper) metaWrapper.style.opacity = '1';
         

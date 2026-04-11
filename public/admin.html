@@ -72,8 +72,9 @@
                         <button class="sidebar-btn" onclick="switchTab('comments')">💬 Comments</button>
                         <button class="sidebar-btn" onclick="switchTab('subscribers')">👥 Subscribers</button>
                         
-                        <button class="sidebar-btn" onclick="switchTab('privacy')">🔒 Privacy</button>
-                        <div style="margin-top: auto; padding: 1rem;">
+                        <button class="nav-btn" data-tab="privacy" onclick="switchTab('privacy')">📝 Privacy Policy</button>
+                        <button class="nav-btn" data-tab="author" onclick="switchTab('author')">👤 Author Setup</button>
+                        <a href="/" class="nav-btn" target="_blank" style="margin-top: auto;">🌐 View Live Site</a>
                             <button class="logout-btn" onclick="handleLogout()" style="width: 100%; text-align: left; background: transparent;">🚪 Logout</button>
                         </div>
                     </aside>
@@ -305,7 +306,32 @@
                             <div class="form-group" style="display: flex; gap: 1rem; align-items: center;">
                                 <button type="button" class="submit-btn box-glow" id="save-privacy-btn" style="width: auto;">Save Privacy Policy</button>
                                 <span id="privacy-saved-meta" class="field-note"></span>
-                            </div>
+                            </form>
+                        </div>
+
+                        <!-- TAB: Author Setup -->
+                        <div id="tab-author" class="tab-content" style="display: none;">
+                            <h2 style="text-align: left; margin-bottom: 2rem;">Global Author Profile</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Configure the author profile that appears across the site and at the end of your articles.</p>
+                            
+                            <form id="author-settings-form" class="editor-surface" onsubmit="saveAuthorProfile(event)">
+                                <div class="form-group">
+                                    <label>Display Name</label>
+                                    <input type="text" id="author-name" placeholder="E.g., The Black Light" required/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Profile Image URL</label>
+                                    <input type="url" id="author-image-url" placeholder="https://... image link" required/>
+                                    <small class="field-note">Paste a link to your author logo or headshot.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label>Professional Bio</label>
+                                    <textarea id="author-bio" rows="4" placeholder="Brief background summarizing your expertise..." required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="submit-btn box-glow">Save Author Configuration</button>
+                                </div>
+                            </form>
                         </div>
 
                     </div>

@@ -72,6 +72,9 @@
                 <button type="button" class="category-chip" data-category="Technology" onclick="loadCategory('Technology')">Technology</button>
             </div>
             <div class="nav-actions">
+                <button class="nav-btn" onclick="openAuthorModal()" title="About the Analyst" style="display: flex; align-items: center; gap: 0.5rem; background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: var(--radius-full); padding: 0.5rem 1rem;">
+                    <span class="icon">ℹ️</span> <span style="font-size: 0.9rem; font-weight: 500;">About</span>
+                </button>
                 <button class="nav-btn theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode">
                     <span class="icon">🌓</span>
                 </button>
@@ -127,6 +130,15 @@
                     <div class="skeleton-text" style="width: 90%;"></div>
                 </div>
 
+                <!-- Author Bio Section (End of Article) -->
+                <div id="article-author-bio" class="author-bio-card glass-panel" style="display: none; margin-top: 3rem; margin-bottom: 2rem; padding: 2rem; border-radius: var(--radius-lg); display: flex; align-items: center; gap: 1.5rem;">
+                    <img id="inline-author-image" src="" alt="Author" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); flex-shrink: 0;"/>
+                    <div>
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 1.2rem; color: var(--text-primary);" id="inline-author-name"></h4>
+                        <p style="margin: 0; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;" id="inline-author-bio"></p>
+                    </div>
+                </div>
+
                 <!-- Interaction Section -->
                 <div class="interaction-bar">
                     <div class="like-section">
@@ -160,6 +172,16 @@
             </article>
         </section>
     </main>
+
+    <!-- About Author Modal -->
+    <div id="author-modal" class="modal-overlay" onclick="closeAuthorModal()">
+        <div class="modal-content animate-scale" onclick="event.stopPropagation()" style="max-width: 450px; text-align: center; padding: 3rem 2rem;">
+            <button class="close-modal" onclick="closeAuthorModal()">&times;</button>
+            <img id="modal-author-image" src="" alt="Author Profile" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto 1.5rem; border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent-glow);"/>
+            <h3 id="modal-author-name" style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-primary);">Analyst Profile</h3>
+            <p id="modal-author-bio" style="font-size: 1rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;"></p>
+        </div>
+    </div>
 
     <!-- Social Share Modal -->
     <div id="share-modal" class="modal-overlay" onclick="closeShareModal()">

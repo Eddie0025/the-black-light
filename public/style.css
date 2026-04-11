@@ -636,6 +636,24 @@ body.light-mode .blog-card {
     gap: 1.5rem;
 }
 
+.glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .glass-panel {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.author-bio-card:hover {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border-color: rgba(192, 132, 252, 0.3);
+}
+
 .comment {
     background: var(--bg-surface);
     padding: 1.5rem;
