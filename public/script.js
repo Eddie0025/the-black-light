@@ -4,6 +4,7 @@ let allBlogs = [];
 let currentPage = 1;
 let activeCategory = null;
 const pageSize = 5;
+const SITE_ORIGIN = 'https://theblacklight.blog';
 
 // URL Slug Helper
 function slugify(text) {
@@ -13,6 +14,48 @@ function slugify(text) {
         .replace(/\-\-+/g, '-')         // Replace multiple - with single -
         .replace(/^-+/, '')             // Trim - from start of text
         .replace(/-+$/, '');            // Trim - from end of text
+}
+
+function stripHtml(html) {
+    return (html || '').replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function buildArticlePath(id, title) {
+    if (!id) return '/';
+    const slug = slugify(title || 'article') || 'article';
+    return `/article/${id}-${slug}`;
+}
+
+function buildArticleUrl(post) {
+    const overrideUrl = (post?.canonical_override_url || '').trim();
+    if (overrideUrl) {
+        if (/^https?:\/\//i.test(overrideUrl)) return overrideUrl;
+        if (overrideUrl.startsWith('/')) return `${SITE_ORIGIN}${overrideUrl}`;
+        return `https://${overrideUrl.replace(/^\/+/, '')}`;
+    }
+
+    return `${SITE_ORIGIN}${buildArticlePath(post?.id, post?.title)}`;
+}
+
+function getSeoTitle(post) {
+    return post?.seo_title?.trim() || post?.title || 'The Black Light';
+}
+
+function getMetaDescription(post) {
+    const explicitDescription = post?.meta_description?.trim();
+    if (explicitDescription) return explicitDescription;
+
+    const fallbackText = post?.excerpt?.trim() || stripHtml(post?.content || '');
+    if (fallbackText.length <= 160) return fallbackText;
+    return `${fallbackText.substring(0, 157).trimEnd()}...`;
+}
+
+function parseArticleIdFromLocation() {
+    const pathMatch = window.location.pathname.match(/^\/article\/(\d+)(?:-[^/]*)?\/?$/i);
+    if (pathMatch) return pathMatch[1];
+
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id');
 }
 
 // Intersection Observer for Scroll Reveals
@@ -55,16 +98,14 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Process URL parameters for deep-linking
     const urlParams = new URLSearchParams(window.location.search);
-    const articleId = urlParams.get('id');
+    const articleId = parseArticleIdFromLocation();
     const viewParam = urlParams.get('view');
     const categoryParam = urlParams.get('category');
     
     if (articleId) {
-        // Show skeleton immediately
         navigateTo('article', false, { id: articleId });
         fetchArticle(articleId, false); 
     } else if (viewParam === 'article') {
-        // Redirect to home if article view requested without an ID
         navigateTo('home', false);
         fetchBlogs();
     } else if (categoryParam) {
@@ -82,6 +123,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.onpopstate = function(event) {
+    const articleIdFromPath = parseArticleIdFromLocation();
+
+    if (!event.state && articleIdFromPath) {
+        fetchArticle(articleIdFromPath, false);
+        return;
+    }
+
     if (event.state) {
         const { view, id, category } = event.state;
         if (view === 'article' && id) {
@@ -144,12 +192,13 @@ function navigateTo(viewId, pushHistory = true, extraData = {}, mode = 'push') {
     if (pushHistory) {
         let url = window.location.pathname;
         if (viewId === 'article' && extraData.id) {
-            const slug = extraData.title ? `&title=${slugify(extraData.title)}` : '';
-            url += `?id=${extraData.id}${slug}`;
+            url = buildArticlePath(extraData.id, extraData.title);
         } else if (viewId !== 'home') {
             url += `?view=${viewId}`;
         } else if (extraData.category) {
-            url += `?category=${encodeURIComponent(extraData.category)}`;
+            url = `/?category=${encodeURIComponent(extraData.category)}`;
+        } else if (viewId === 'home') {
+            url = '/';
         }
         
         const state = { 
@@ -276,12 +325,7 @@ function changePage(delta) {
 }
 
 async function fetchArticle(id, pushHistory = true) {
-    // Show article view immediately (with skeleton logic)
-    // If we already have the title in URL, we can use it, otherwise generic skeleton
-    const urlParams = new URLSearchParams(window.location.search);
-    const titleFromUrl = urlParams.get('title');
-    
-    navigateTo('article', pushHistory, { id: id, title: titleFromUrl });
+    navigateTo('article', pushHistory, { id });
 
     // Prepare UI for new content (ensure skeletons are visible if they were hidden)
     const skeletonCategory = document.getElementById('skeleton-category');
@@ -364,15 +408,8 @@ async function fetchArticle(id, pushHistory = true) {
         renderComments(comments || []);
         
         // Dynamic SEO Update
-        updateSEO(
-            post.title, 
-            post.excerpt || post.content.replace(/<[^>]*>?/gm, '').substring(0, 160), 
-            post.cover_image,
-            window.location.href
-        );
+        updateSEO(post);
         
-        // Use 'replace' mode here so we don't create two history entries 
-        // (one for ID and one for ID+Title). This fixes the "Back button twice" issue.
         navigateTo('article', pushHistory, { id: post.id, title: post.title }, 'replace');
         trackView(); 
     } catch (e) {
@@ -609,32 +646,85 @@ function copyArticleLink() {
 
 // ---- SEO Engine ----
 
-function updateSEO(title, description, image, url) {
-    // Standard Tags
-    document.title = `${title} | The Black Light`;
+function updateArticleSchema(post, canonicalUrl, description, seoTitle) {
+    const schemaScript = document.getElementById('article-schema');
+    if (!schemaScript) return;
+
+    const articleSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: seoTitle,
+        description,
+        image: post.cover_image ? [post.cover_image] : undefined,
+        datePublished: post.created_at,
+        dateModified: post.updated_at || post.created_at,
+        mainEntityOfPage: canonicalUrl,
+        author: {
+            '@type': 'Person',
+            name: post.author || 'The Black Light'
+        },
+        publisher: {
+            '@type': 'Organization',
+            name: 'The Black Light',
+            logo: {
+                '@type': 'ImageObject',
+                url: `${SITE_ORIGIN}/black_light_logo.png`
+            }
+        },
+        articleSection: post.category || 'Analysis',
+        url: canonicalUrl
+    };
+
+    schemaScript.textContent = JSON.stringify(articleSchema);
+}
+
+function clearArticleSchema() {
+    const schemaScript = document.getElementById('article-schema');
+    if (schemaScript) schemaScript.textContent = '';
+}
+
+function updateSEO(post) {
+    const seoTitle = getSeoTitle(post);
+    const description = getMetaDescription(post);
+    const canonicalUrl = buildArticleUrl(post);
+
+    document.title = `${seoTitle} | The Black Light`;
     const metaDesc = document.getElementById('meta-desc');
     if (metaDesc) metaDesc.setAttribute('content', description);
 
-    // OpenGraph Tags
     const ogTitle = document.getElementById('og-title');
     const ogDesc = document.getElementById('og-desc');
     const ogImage = document.getElementById('og-image');
-    if (ogTitle) ogTitle.setAttribute('content', title);
+    const ogUrl = document.getElementById('og-url');
+    if (ogTitle) ogTitle.setAttribute('content', seoTitle);
     if (ogDesc) ogDesc.setAttribute('content', description);
-    if (ogImage) ogImage.setAttribute('content', image);
+    if (ogImage) ogImage.setAttribute('content', post.cover_image || 'black_light_logo.png');
+    if (ogUrl) ogUrl.setAttribute('content', canonicalUrl);
 
-    // Canonical
     const canonical = document.getElementById('canonical-url');
-    if (canonical) canonical.setAttribute('href', url);
+    if (canonical) canonical.setAttribute('href', canonicalUrl);
+
+    updateArticleSchema(post, canonicalUrl, description, seoTitle);
 }
 
 function resetSEO() {
-    updateSEO(
-        "The Black Light | Professional Intelligence & Insights",
-        "Deep-dive analysis on global macroeconomics, energy markets, and international policy.",
-        "black_light_logo.png",
-        "https://theblacklight.blog/"
-    );
+    document.title = "The Black Light | Professional Intelligence & Insights";
+    const metaDesc = document.getElementById('meta-desc');
+    if (metaDesc) metaDesc.setAttribute('content', "Deep-dive analysis on global macroeconomics, energy markets, and international policy.");
+
+    const ogTitle = document.getElementById('og-title');
+    const ogDesc = document.getElementById('og-desc');
+    const ogImage = document.getElementById('og-image');
+    const ogUrl = document.getElementById('og-url');
+    if (ogTitle) ogTitle.setAttribute('content', "The Black Light | Professional Intelligence");
+    if (ogDesc) ogDesc.setAttribute('content', "Illuminating the unseen patterns in global macroeconomics and policy.");
+    if (ogImage) ogImage.setAttribute('content', 'black_light_logo.png');
+    if (ogUrl) ogUrl.setAttribute('content', SITE_ORIGIN);
+
+    const canonical = document.getElementById('canonical-url');
+    if (canonical) canonical.setAttribute('href', SITE_ORIGIN);
+
+    clearArticleSchema();
 }
 
 // Hook reset into navigation - Fix: Properly spread arguments to avoid losing data like article ID

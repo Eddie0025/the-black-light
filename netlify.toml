@@ -3,6 +3,12 @@
   publish = "public"
 
 [[redirects]]
+  from = "/sitemap.xml"
+  to = "/api/sitemap"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/admin"
   to = "/admin.html"
   status = 200

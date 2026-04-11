@@ -840,6 +840,73 @@ body.light-mode .blog-card {
     font-size: 0.9rem;
 }
 
+.editor-tabs {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.35rem;
+    margin-bottom: 1.5rem;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.editor-tab-btn {
+    padding: 0.7rem 1rem;
+    border-radius: calc(var(--radius-md) - 6px);
+    color: var(--text-secondary);
+    font-weight: 600;
+    transition: var(--transition-fast);
+}
+
+.editor-tab-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.04);
+}
+
+.editor-tab-btn.active {
+    color: white;
+    background: var(--accent);
+    box-shadow: 0 10px 20px var(--accent-glow);
+}
+
+.editor-tab-panel {
+    display: none;
+}
+
+.editor-tab-panel.active {
+    display: block;
+}
+
+.seo-info-card {
+    padding: 1.25rem 1.35rem;
+    margin-bottom: 1.5rem;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.seo-info-card.compact {
+    margin-top: 0.5rem;
+}
+
+.seo-info-card h4 {
+    margin-bottom: 0.4rem;
+    color: var(--text-primary);
+}
+
+.seo-info-card p {
+    margin: 0;
+    text-align: left;
+    color: var(--text-secondary);
+}
+
+.field-note,
+.field-counter {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+}
+
 /* ================== MODAL & TOAST ================== */
 .modal-overlay {
     position: fixed;

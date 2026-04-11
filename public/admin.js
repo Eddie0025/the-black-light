@@ -1,5 +1,100 @@
 let editingBlogId = null;
 let authReady = false;
+const SITE_ORIGIN = 'https://theblacklight.blog';
+
+function slugify(text) {
+    return (text || '')
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\-]+/g, '')
+        .replace(/\-\-+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
+}
+
+function stripHtml(html) {
+    return (html || '').replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function buildArticlePath(id, title) {
+    if (!id) return '';
+    const slug = slugify(title) || 'article';
+    return `/article/${id}-${slug}`;
+}
+
+function buildCanonicalUrl(id, title) {
+    const path = buildArticlePath(id, title);
+    return path ? `${SITE_ORIGIN}${path}` : '';
+}
+
+function normalizeCanonicalOverride(value) {
+    const trimmed = (value || '').trim();
+    if (!trimmed) return '';
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    if (trimmed.startsWith('/')) return `${SITE_ORIGIN}${trimmed}`;
+    return `https://${trimmed.replace(/^\/+/, '')}`;
+}
+
+function switchEditorTab(tabId) {
+    document.querySelectorAll('.editor-tab-panel').forEach(panel => panel.classList.remove('active'));
+    document.querySelectorAll('.editor-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+    const panel = document.getElementById(`editor-tab-${tabId}`);
+    if (panel) panel.classList.add('active');
+
+    document.querySelectorAll(`.editor-tab-btn[data-editor-tab="${tabId}"]`).forEach(btn => btn.classList.add('active'));
+}
+
+function updateSeoCounters() {
+    const seoTitle = document.getElementById('seo-title');
+    const seoDescription = document.getElementById('seo-description');
+    const titleCount = document.getElementById('seo-title-count');
+    const descriptionCount = document.getElementById('seo-description-count');
+
+    if (titleCount) {
+        titleCount.innerText = `${seoTitle?.value.length || 0} / 60`;
+    }
+
+    if (descriptionCount) {
+        descriptionCount.innerText = `${seoDescription?.value.length || 0} / 160`;
+    }
+}
+
+function refreshSeoPreview() {
+    const title = document.getElementById('new-blog-title')?.value || '';
+    const previewField = document.getElementById('seo-canonical-preview');
+    const previewNote = document.getElementById('seo-canonical-note');
+    const overrideValue = normalizeCanonicalOverride(document.getElementById('seo-canonical-override')?.value || '');
+    const generatedCanonical = buildCanonicalUrl(editingBlogId, title);
+
+    if (previewField) {
+        previewField.value = overrideValue || generatedCanonical || '';
+    }
+
+    if (previewNote) {
+        if (overrideValue) {
+            previewNote.innerText = 'Manual override is active for this article.';
+        } else if (generatedCanonical) {
+            previewNote.innerText = 'This article will use its generated article URL automatically.';
+        } else {
+            previewNote.innerText = 'Canonical URL will be generated automatically after the article is first published.';
+        }
+    }
+}
+
+function bindSeoInputs() {
+    const titleInput = document.getElementById('new-blog-title');
+    const overrideInput = document.getElementById('seo-canonical-override');
+    const seoTitleInput = document.getElementById('seo-title');
+    const seoDescriptionInput = document.getElementById('seo-description');
+
+    if (titleInput) titleInput.addEventListener('input', refreshSeoPreview);
+    if (overrideInput) overrideInput.addEventListener('input', refreshSeoPreview);
+    if (seoTitleInput) seoTitleInput.addEventListener('input', updateSeoCounters);
+    if (seoDescriptionInput) seoDescriptionInput.addEventListener('input', updateSeoCounters);
+}
 
 function autoResize(textarea) {
     textarea.style.height = 'auto';
@@ -15,6 +110,9 @@ function toggleWorkspaceSize() {
 document.addEventListener("DOMContentLoaded", () => {
     initializeAdminAuth();
     initFileUploadListener();
+    bindSeoInputs();
+    updateSeoCounters();
+    refreshSeoPreview();
 });
 
 function showToast(message) {
@@ -287,7 +385,9 @@ function switchTab(tabId) {
     document.getElementById(`tab-${tabId}`).style.display = 'block';
     
     document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    const triggerButton = (typeof event !== 'undefined' && event?.currentTarget)
+        || Array.from(document.querySelectorAll('.sidebar-btn')).find(btn => (btn.getAttribute('onclick') || '').includes(`'${tabId}'`));
+    if (triggerButton) triggerButton.classList.add('active');
 
     // Close sidebar on mobile after selection
     const sidebar = document.getElementById('admin-sidebar');
@@ -525,9 +625,15 @@ async function editHubArticle(id) {
         document.getElementById('new-blog-image').value = blog.cover_image;
         const editorTextarea = document.getElementById('new-blog-content');
         editorTextarea.value = blog.content;
+        document.getElementById('seo-title').value = blog.seo_title || '';
+        document.getElementById('seo-description').value = blog.meta_description || '';
+        document.getElementById('seo-canonical-override').value = blog.canonical_override_url || '';
         
         // Load stats visibility
         document.getElementById('show-stats').checked = blog.show_stats !== false;
+        updateSeoCounters();
+        refreshSeoPreview();
+        switchEditorTab('content');
         
         // Trigger auto-resize after loading content
         autoResize(editorTextarea);
@@ -549,6 +655,12 @@ function cancelEditing() {
     document.getElementById('cancel-edit-btn').style.display = 'none';
     document.getElementById('file-name-label').innerText = "No file chosen";
     document.getElementById('show-stats').checked = true;
+    document.getElementById('seo-title').value = '';
+    document.getElementById('seo-description').value = '';
+    document.getElementById('seo-canonical-override').value = '';
+    switchEditorTab('content');
+    updateSeoCounters();
+    refreshSeoPreview();
     
     // Reset textarea height
     const textarea = document.getElementById('new-blog-content');
@@ -632,6 +744,9 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     let cover_image = document.getElementById('new-blog-image').value;
     const fileInput = document.getElementById('new-blog-file');
     let content = document.getElementById('new-blog-content').value;
+    const seoTitle = document.getElementById('seo-title').value.trim();
+    const metaDescription = document.getElementById('seo-description').value.trim();
+    const canonicalOverride = normalizeCanonicalOverride(document.getElementById('seo-canonical-override').value);
     
     try {
         if (fileInput && fileInput.files[0]) {
@@ -663,8 +778,8 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
                 .join('\n');
         }
 
-        const tempElement = content.replace(/<[^>]+>/g, '');
-        const excerpt = tempElement.substring(0, 150) + (tempElement.length > 150 ? '...' : '');
+        const plainText = stripHtml(content);
+        const excerpt = plainText.substring(0, 150) + (plainText.length > 150 ? '...' : '');
 
         const payload = {
             title,
@@ -674,7 +789,10 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
             content,
             excerpt,
             is_archived: false,
-            show_stats: document.getElementById('show-stats').checked
+            show_stats: document.getElementById('show-stats').checked,
+            seo_title: seoTitle || null,
+            meta_description: metaDescription || null,
+            canonical_override_url: canonicalOverride || null
         };
 
         if (editingBlogId) {
@@ -682,15 +800,21 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
             if (error) throw error;
             showToast("Report updated successfully!");
         } else {
-            const { error } = await supabase.from('blogs').insert([payload]);
+            const { data: insertedBlog, error } = await supabase.from('blogs').insert([payload]).select('id, title').single();
             if (error) throw error;
+            editingBlogId = insertedBlog?.id || null;
+            refreshSeoPreview();
             showToast("New report published!");
         }
         
         cancelEditing();
         switchTab('articles');
     } catch(err) {
-        showToast("Action failed: " + err.message);
+        if ((err.message || '').includes('column')) {
+            showToast("Action failed: the SEO database fields are missing. Run the new SQL migration, then try again.");
+        } else {
+            showToast("Action failed: " + err.message);
+        }
     } finally {
         publishBtn.disabled = false;
         publishBtn.innerText = editingBlogId ? "Update Intelligence Report" : "Publish to Intelligence Feed";
