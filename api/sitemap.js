@@ -52,7 +52,7 @@ export default async function handler(_req, res) {
     try {
       const { data, error } = await supabase
         .from('blogs')
-        .select('id, title, created_at, updated_at, canonical_override_url')
+        .select('id, title, created_at, canonical_override_url')
         .eq('is_archived', false)
         .order('id', { ascending: false });
 
@@ -67,7 +67,7 @@ export default async function handler(_req, res) {
       try {
         const { data, error } = await supabase
           .from('blogs')
-          .select('id, title, created_at, updated_at')
+          .select('id, title, created_at')
           .eq('is_archived', false)
           .order('id', { ascending: false });
 
@@ -82,7 +82,7 @@ export default async function handler(_req, res) {
         try {
           const { data, error } = await supabase
             .from('blogs')
-            .select('id, title, created_at, updated_at')
+            .select('id, title, created_at')
             .order('id', { ascending: false });
 
           if (!error && data) {
