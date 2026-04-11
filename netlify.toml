@@ -3,6 +3,12 @@
   publish = "public"
 
 [[redirects]]
+  from = "https://theblacklight.blog/*"
+  to = "https://www.theblacklight.blog/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/sitemap.xml"
   to = "/api/sitemap"
   status = 200

@@ -1,5 +1,18 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "theblacklight.blog"
+        }
+      ],
+      "destination": "https://www.theblacklight.blog/$1",
+      "permanent": true
+    }
+  ],
   "routes": [
     { "src": "/sitemap.xml", "dest": "/api/sitemap" },
     { "src": "/admin", "dest": "/admin.html" },
