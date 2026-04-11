@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | The Black Light</title>
+    <meta name="description" content="Privacy Policy for The Black Light.">
+    <base href="/">
+    <link rel="icon" type="image/png" href="black_light_logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+</head>
+<body>
+    <main class="app-container privacy-page">
+        <section class="privacy-card">
+            <a href="/" class="back-btn" style="display: inline-flex; margin-bottom: 1rem;">&larr; Back to Home</a>
+            <h1>Privacy Policy</h1>
+            <pre id="privacy-policy-content" class="privacy-policy-content">Loading privacy policy...</pre>
+        </section>
+    </main>
+
+    <script>
+        const PRIVACY_CONTENT_KEY = 'privacy_policy';
+        const FALLBACK_POLICY = `Privacy Policy
+Effective Date: April 11, 2026
+Last Updated: April 11, 2026
+
+At The Black Light, accessible from https://theblacklight.blog, one of our main priorities is the privacy of our visitors.`;
+
+        async function loadPrivacyPolicy() {
+            const contentEl = document.getElementById('privacy-policy-content');
+            if (!contentEl) return;
+
+            try {
+                const { data, error } = await supabase
+                    .from('site_content')
+                    .select('content')
+                    .eq('key', PRIVACY_CONTENT_KEY)
+                    .maybeSingle();
+
+                if (error) throw error;
+                contentEl.textContent = (data && data.content) ? data.content : FALLBACK_POLICY;
+            } catch (e) {
+                contentEl.textContent = FALLBACK_POLICY;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadPrivacyPolicy);
+    </script>
+</body>
+</html>

@@ -1,6 +1,12 @@
 let editingBlogId = null;
 let authReady = false;
 const SITE_ORIGIN = 'https://theblacklight.blog';
+const PRIVACY_CONTENT_KEY = 'privacy_policy';
+const DEFAULT_PRIVACY_POLICY = `Privacy Policy
+Effective Date: April 11, 2026
+Last Updated: April 11, 2026
+
+At The Black Light, accessible from https://theblacklight.blog, one of our main priorities is the privacy of our visitors.`;
 
 function slugify(text) {
     return (text || '')
@@ -96,6 +102,13 @@ function bindSeoInputs() {
     if (seoDescriptionInput) seoDescriptionInput.addEventListener('input', updateSeoCounters);
 }
 
+function bindPrivacyEditor() {
+    const saveBtn = document.getElementById('save-privacy-btn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', savePrivacyPolicy);
+    }
+}
+
 function autoResize(textarea) {
     textarea.style.height = 'auto';
     textarea.style.height = textarea.scrollHeight + 'px';
@@ -111,6 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeAdminAuth();
     initFileUploadListener();
     bindSeoInputs();
+    bindPrivacyEditor();
     updateSeoCounters();
     refreshSeoPreview();
 });
@@ -402,10 +416,85 @@ function switchTab(tabId) {
     if (tabId === 'comments') fetchHubComments();
     if (tabId === 'subscribers') fetchHubSubscribers();
     if (tabId === 'analytics') fetchHubStats();
+    if (tabId === 'privacy') loadPrivacyPolicyEditor();
 }
 
 async function initHub() {
     await fetchHubStats();
+}
+
+async function loadPrivacyPolicyEditor() {
+    const editor = document.getElementById('privacy-policy-editor');
+    const meta = document.getElementById('privacy-saved-meta');
+    if (!editor) return;
+
+    editor.value = '';
+    if (meta) meta.innerText = 'Loading policy...';
+
+    try {
+        const { data, error } = await supabase
+            .from('site_content')
+            .select('content, updated_at')
+            .eq('key', PRIVACY_CONTENT_KEY)
+            .maybeSingle();
+
+        if (error) throw error;
+
+        editor.value = data?.content || DEFAULT_PRIVACY_POLICY;
+        if (meta) {
+            meta.innerText = data?.updated_at
+                ? `Last saved: ${new Date(data.updated_at).toLocaleString()}`
+                : 'No saved policy yet. You can create one now.';
+        }
+    } catch (e) {
+        if (meta) meta.innerText = '';
+        editor.value = DEFAULT_PRIVACY_POLICY;
+        showToast("Could not load privacy policy. Check Supabase table setup.");
+    }
+}
+
+async function savePrivacyPolicy() {
+    const editor = document.getElementById('privacy-policy-editor');
+    const saveBtn = document.getElementById('save-privacy-btn');
+    const meta = document.getElementById('privacy-saved-meta');
+    if (!editor || !saveBtn) return;
+
+    const content = editor.value.trim();
+    if (!content) {
+        showToast("Privacy policy cannot be empty");
+        return;
+    }
+
+    const originalText = saveBtn.innerText;
+    saveBtn.disabled = true;
+    saveBtn.innerText = 'Saving...';
+
+    try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const userId = sessionData?.session?.user?.id || null;
+
+        const { error } = await supabase
+            .from('site_content')
+            .upsert([{
+                key: PRIVACY_CONTENT_KEY,
+                content,
+                updated_by: userId
+            }], { onConflict: 'key' });
+
+        if (error) throw error;
+
+        if (meta) meta.innerText = `Last saved: ${new Date().toLocaleString()}`;
+        showToast("Privacy policy saved");
+    } catch (e) {
+        if ((e.message || '').toLowerCase().includes('site_content')) {
+            showToast("Save failed: run the privacy policy SQL migration in Supabase first.");
+        } else {
+            showToast("Save failed: " + e.message);
+        }
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = originalText;
+    }
 }
 
 async function fetchHubStats() {

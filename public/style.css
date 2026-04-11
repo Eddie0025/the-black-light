@@ -907,6 +907,38 @@ body.light-mode .blog-card {
     font-size: 0.82rem;
 }
 
+#privacy-policy-editor {
+    min-height: 420px;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.7;
+}
+
+.privacy-page {
+    margin-top: 5rem;
+    max-width: 920px;
+}
+
+.privacy-card {
+    background: var(--bg-surface);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+}
+
+.privacy-card h1 {
+    margin-bottom: 1.25rem;
+}
+
+.privacy-policy-content {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.8;
+    color: var(--text-primary);
+    margin: 0;
+}
+
 /* ================== MODAL & TOAST ================== */
 .modal-overlay {
     position: fixed;
