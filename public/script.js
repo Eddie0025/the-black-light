@@ -460,6 +460,7 @@ async function fetchArticle(id, pushHistory = true) {
         
         if (coverEl) {
             coverEl.src = post.cover_image;
+            coverEl.alt = post.title || 'Intelligence Cover';
             coverEl.onload = () => {
                 const container = document.getElementById('cover-skeleton-container');
                 if (container) container.classList.remove('skeleton');
@@ -895,7 +896,7 @@ function updateHomeSEO(category = null) {
     setMeta('og-url', 'content', url);
     setMeta('og-type', 'content', 'website');
 
-    // Twitter
+    // Reset Twitter
     setMeta('twitter-title', 'content', title);
     setMeta('twitter-desc', 'content', desc);
     setMeta('twitter-image', 'content', defaultImage);
@@ -904,9 +905,35 @@ function updateHomeSEO(category = null) {
     const canonical = document.getElementById('canonical-url');
     if (canonical) canonical.setAttribute('href', url);
 
+    // Dynamic Home/Collection Schema
+    updateCollectionSchema(category, url, desc, title);
+
     // Clean up schemas for home page
     clearArticleSchema();
     clearBreadcrumbSchema();
+}
+
+function updateCollectionSchema(category, url, description, title) {
+    let schemaScript = document.getElementById('collection-schema');
+    if (!schemaScript) {
+        schemaScript = document.createElement('script');
+        schemaScript.type = 'application/ld+json';
+        schemaScript.id = 'collection-schema';
+        document.head.appendChild(schemaScript);
+    }
+
+    const schema = {
+        '@context': 'https://schema.org',
+        '@type': category ? 'CollectionPage' : 'WebSite',
+        name: title,
+        url: url,
+        description: description,
+        publisher: {
+            '@type': 'Organization',
+            name: 'The Black Light'
+        }
+    };
+    schemaScript.textContent = JSON.stringify(schema);
 }
 
 // Hook reset into navigation - Fix: Properly spread arguments to avoid losing data like article ID
