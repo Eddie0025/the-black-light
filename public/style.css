@@ -1065,18 +1065,21 @@ body.light-mode .glass-panel {
     border: 1px solid var(--accent);
     box-shadow: 0 0 50px var(--accent-glow);
     backdrop-filter: blur(10px);
+    overflow: hidden;
+    max-height: 85vh;
+}
+
+.modal-scroll-area {
     max-height: 85vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--accent) transparent;
 }
 
-.modal-content::-webkit-scrollbar {
+.modal-scroll-area::-webkit-scrollbar {
     width: 6px;
 }
 
-.modal-content::-webkit-scrollbar-thumb {
+.modal-scroll-area::-webkit-scrollbar-thumb {
     background: var(--accent);
     border-radius: 10px;
 }
@@ -1156,47 +1159,6 @@ body.light-mode .glass-panel {
     padding-bottom: 1.5rem;
 }
 
-.modal-scroll-btn {
-    position: sticky;
-    bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 42px;
-    height: 42px;
-    background: var(--bg-surface-elevated);
-    border: 1.5px solid var(--accent);
-    color: var(--accent);
-    border-radius: 50%;
-    display: none; /* Controlled by JS */
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 0 20px var(--accent-glow), inset 0 0 10px rgba(0,0,0,0.5);
-    z-index: 100;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    margin-top: -3rem; /* Pull up to float over content */
-    margin-bottom: 1rem;
-    animation: scroll-bounce 2s infinite;
-}
-
-.modal-scroll-btn:hover {
-    background: var(--accent);
-    color: white;
-    box-shadow: 0 0 30px var(--accent);
-    transform: translateX(-50%) scale(1.15);
-}
-
-.modal-scroll-btn.hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateX(-50%) translateY(20px);
-}
-
-@keyframes scroll-bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-    40% { transform: translateX(-50%) translateY(-8px); }
-    60% { transform: translateX(-50%) translateY(-4px); }
-}
 
 .close-modal {
     position: absolute;

@@ -270,25 +270,23 @@
         <div class="modal-content dossier-card animate-scale" onclick="event.stopPropagation()">
             <button class="close-modal" onclick="closeAuthorModal()">&times;</button>
             
-            <div class="dossier-layout">
-                <div class="dossier-aside">
-                    <div class="dossier-avatar-wrapper">
-                        <img id="modal-author-image" src="" alt="Author Profile"/>
+            <div class="modal-scroll-area">
+                <div class="dossier-layout">
+                    <div class="dossier-aside">
+                        <div class="dossier-avatar-wrapper">
+                            <img id="modal-author-image" src="" alt="Author Profile"/>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="dossier-main">
-                    <div class="dossier-header">
-                        <h3 id="modal-author-name"></h3>
-                        <div id="modal-author-title" class="dossier-title"></div>
+                    
+                    <div class="dossier-main">
+                        <div class="dossier-header">
+                            <h3 id="modal-author-name"></h3>
+                            <div id="modal-author-title" class="dossier-title"></div>
+                        </div>
+                        <p id="modal-author-bio" class="dossier-bio"></p>
                     </div>
-                    <p id="modal-author-bio" class="dossier-bio"></p>
                 </div>
             </div>
-            
-            <button id="modal-scroll-btn" class="modal-scroll-btn" onclick="scrollModalDown()" title="Scroll for more">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
-            </button>
         </div>
     </div>
 

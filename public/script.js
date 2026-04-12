@@ -294,17 +294,6 @@ function openAuthorModal() {
         modal.classList.add('show');
         
         // Check if content overflows to show scroll button
-        const content = modal.querySelector('.modal-content');
-        const btn = document.getElementById('modal-scroll-btn');
-        
-        if (content && btn) {
-            const hasOverflow = content.scrollHeight > content.clientHeight + 20;
-            btn.style.display = hasOverflow ? 'flex' : 'none';
-            btn.classList.toggle('hidden', !hasOverflow);
-            
-            // Listen for scroll to hide button
-            content.onscroll = handleModalScroll;
-        }
     }, 10);
 }
 
@@ -313,31 +302,9 @@ function closeAuthorModal() {
     modal.classList.remove('show');
     setTimeout(() => {
         modal.style.display = 'none';
-        // Cleanup scroll listener
-        modal.querySelector('.modal-content').onscroll = null;
     }, 300);
 }
 
-function scrollModalDown() {
-    const modalContent = document.querySelector('#author-modal .modal-content');
-    if (modalContent) {
-        modalContent.scrollBy({ top: 250, behavior: 'smooth' });
-    }
-}
-
-function handleModalScroll(e) {
-    const btn = document.getElementById('modal-scroll-btn');
-    if (!btn) return;
-    
-    const target = e.target;
-    const isAtBottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 50;
-    
-    if (isAtBottom) {
-        btn.classList.add('hidden');
-    } else {
-        btn.classList.remove('hidden');
-    }
-}
 
 // =================== ARTICLE FETCHING ===================
 async function fetchBlogs(category = null) {
