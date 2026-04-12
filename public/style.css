@@ -123,7 +123,7 @@ body.light-mode {
         radial-gradient(circle at 0% 0%, rgba(192, 132, 252, 0.02), transparent);
 }
 
-body.light-mode .hero h1 {
+body.light-mode .hero h2 {
     background: linear-gradient(135deg, #111 0%, #666 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -318,11 +318,10 @@ input:focus, textarea:focus {
     margin-bottom: 2rem;
 }
 
-.hero h1 {
+.hero h2 {
     font-size: 4.5rem;
     font-weight: 800;
-    margin: 0 0 1.5rem 0;
-    padding: 0;
+    margin-bottom: 1.5rem;
     background: linear-gradient(135deg, #fff 0%, #a5a5a5 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -1618,9 +1617,6 @@ body.light-mode input, body.light-mode textarea, body.light-mode .blog-card, bod
 }
 
 @media (max-width: 900px) {
-    .hero h1 {
-        font-size: 3.5rem;
-    }
     .mobile-admin-header { display: flex; }
     
     .dashboard-container {
@@ -1721,9 +1717,6 @@ body.light-mode input, body.light-mode textarea, body.light-mode .blog-card, bod
 }
 
 @media (max-width: 600px) {
-    .hero h1 {
-        font-size: 2.8rem;
-    }
     .app-container { padding: 0 1rem !important; }
     .article-cover-container {
         min-height: 200px;
