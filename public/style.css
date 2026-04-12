@@ -1617,6 +1617,9 @@ body.light-mode input, body.light-mode textarea, body.light-mode .blog-card, bod
 }
 
 @media (max-width: 900px) {
+    .hero h2 {
+        font-size: 3.5rem;
+    }
     .mobile-admin-header { display: flex; }
     
     .dashboard-container {
@@ -1717,6 +1720,9 @@ body.light-mode input, body.light-mode textarea, body.light-mode .blog-card, bod
 }
 
 @media (max-width: 600px) {
+    .hero h2 {
+        font-size: 2.5rem;
+    }
     .app-container { padding: 0 1rem !important; }
     .article-cover-container {
         min-height: 200px;
