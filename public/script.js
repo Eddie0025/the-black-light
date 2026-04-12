@@ -269,9 +269,12 @@ async function fetchAuthorProfile() {
             .maybeSingle();
 
         if (data && data.content) {
-            globalAuthorProfile = JSON.parse(data.content);
+            // Supabase may return content as string or already-parsed object
+            globalAuthorProfile = typeof data.content === 'string'
+                ? JSON.parse(data.content)
+                : data.content;
             
-            // Pre-fill the footer author card only if real data exists
+            // Pre-fill the footer author card
             const footerCard = document.getElementById('footer-author-card');
             if (footerCard && globalAuthorProfile) {
                 document.getElementById('footer-author-image').src = globalAuthorProfile.image_url || 'black_light_logo.png';
