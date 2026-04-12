@@ -1065,8 +1065,9 @@ body.light-mode .glass-panel {
     border: 1px solid var(--accent);
     box-shadow: 0 0 50px var(--accent-glow);
     backdrop-filter: blur(10px);
-    max-height: 90vh;
+    max-height: 85vh;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: var(--accent) transparent;
 }
@@ -1151,6 +1152,8 @@ body.light-mode .glass-panel {
     color: var(--text-secondary);
     line-height: 1.7;
     margin-bottom: 0;
+    white-space: pre-wrap;
+    padding-bottom: 1.5rem;
 }
 
 .close-modal {
