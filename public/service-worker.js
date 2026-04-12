@@ -1,5 +1,5 @@
 // Minimal Service Worker to satisfy PWA installation requirements
-const CACHE_NAME = 'black-light-cache-v1';
+const CACHE_NAME = 'black-light-cache-v2';
 const urlsToCache = [
   '/',
   '/index.html',
