@@ -1174,6 +1174,7 @@ body.light-mode .glass-panel {
     font-size: 1.5rem;
     color: var(--text-secondary);
     transition: var(--transition-fast);
+    z-index: 101; /* Ensure it's above the scroll area */
 }
 .close-modal:hover { 
     background: var(--bg-surface-elevated);
