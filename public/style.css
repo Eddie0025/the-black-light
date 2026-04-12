@@ -719,6 +719,17 @@ body.light-mode .glass-panel {
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.author-bio-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2.5rem;
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+    border-radius: var(--radius-lg);
+    transition: var(--transition-smooth);
+}
+
 .author-bio-card:hover {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     border-color: rgba(192, 132, 252, 0.3);
@@ -1054,6 +1065,19 @@ body.light-mode .glass-panel {
     border: 1px solid var(--accent);
     box-shadow: 0 0 50px var(--accent-glow);
     backdrop-filter: blur(10px);
+    max-height: 90vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+}
+
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 10px;
 }
 
 .dossier-card {
@@ -1656,16 +1680,32 @@ body.light-mode input, body.light-mode textarea, body.light-mode .blog-card, bod
 }
 
 @media (max-width: 768px) {
+    .author-bio-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        padding: 2rem;
+    }
+
+    .dossier-card {
+        width: 95%;
+        max-width: 500px;
+    }
+
     .dossier-layout { flex-direction: column; }
     .dossier-aside { 
         width: 100%; 
         border-right: none; 
         border-bottom: 1px solid rgba(255,255,255,0.05);
         padding: 2rem;
+        background: rgba(0,0,0,0.4);
     }
     .dossier-main { 
-        padding: 2rem; 
+        padding: 2rem 1.5rem; 
         text-align: center;
+    }
+    .dossier-header h3 {
+        font-size: 1.75rem;
     }
 }
 
@@ -1677,11 +1717,20 @@ body.light-mode input, body.light-mode textarea, body.light-mode .blog-card, bod
     }
     #article-title { font-size: 2.2rem; }
 
+    .dossier-card {
+        width: 96%;
+    }
+
+    .dossier-aside, .dossier-main {
+        padding: 1.5rem;
+    }
+
     .close-modal {
         top: 0.5rem;
         right: 0.5rem;
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
         font-size: 1.2rem;
+        background: rgba(0,0,0,0.5);
     }
 }
