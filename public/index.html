@@ -48,6 +48,9 @@
     <link rel="icon" type="image/png" href="black_light_logo.png">
     <link rel="apple-touch-icon" href="black_light_logo.png">
     
+    <!-- Preload LCP Assets -->
+    <link rel="preload" as="image" href="black_light_logo.png">
+    
     <link rel="stylesheet" href="style.css">
     <script id="article-schema" type="application/ld+json"></script>
     <script id="breadcrumb-schema" type="application/ld+json"></script>
@@ -64,8 +67,8 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo-wrapper" onclick="loadHome()" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
-                <img src="black_light_logo.png" alt="Logo" style="height: 35px; border-radius: 6px;">
-                <h1 class="logo">The Black <span class="brand-accent">Light</span><span class="dot">.</span></h1>
+                <img src="black_light_logo.png" alt="The Black Light Logo" style="height: 35px; border-radius: 6px;">
+                <div class="logo">The Black <span class="brand-accent">Light</span><span class="dot">.</span></div>
             </div>
             <div class="nav-links" aria-label="Blog categories">
                 <button type="button" class="category-chip active" data-category="" onclick="loadHome()">Home</button>
@@ -91,7 +94,7 @@
         <section id="home-view" class="view">
             <header class="hero">
                 <div class="featured-badge animate-up">Featured Intelligence</div>
-                <h2 class="animate-up">Illuminating the unseen.</h2>
+                <h1 class="animate-up">Illuminating the unseen.</h1>
                 <div class="hero-desc-wrapper">
                     <p class="animate-up delay-1">Deep-dive analysis on global macroeconomics, energy markets, and international policy.</p>
                 </div>
@@ -207,7 +210,7 @@
     <footer class="site-footer">
         <div class="footer-container">
             <div class="footer-column brand-col">
-                <h1 class="logo">The Black Light<span class="dot">.</span></h1>
+                <div class="logo">The Black Light<span class="dot">.</span></div>
                 <p>Professional analysis of international economics, global markets, and energy industry trends.</p>
                 <div class="social-links">
                     <a href="https://x.com/The_BlackLight" class="social-icon" title="X" target="_blank" rel="noopener noreferrer">

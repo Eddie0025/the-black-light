@@ -135,9 +135,9 @@ body.light-mode .hero h2 {
     box-sizing: border-box;
 }
 
-h1, h2, h3, h4, .logo {
+h1, h2, h3, h4, .logo, .logo-wrapper div {
     font-family: 'Outfit', sans-serif;
-    letter-spacing: -0.025em;    /* Tight Editorial Look */
+    letter-spacing: -0.025em;
     line-height: 1.1;
 }
 
@@ -318,8 +318,8 @@ input:focus, textarea:focus {
     margin-bottom: 2rem;
 }
 
-.hero h2 {
-    font-size: 4.5rem;            /* Larger for impact */
+.hero h1 {
+    font-size: 4.5rem;
     font-weight: 800;
     margin-bottom: 1.5rem;
     background: linear-gradient(135deg, #fff 0%, #a5a5a5 100%);
@@ -402,8 +402,7 @@ body.light-mode .blog-card {
     height: 200px;
     flex-shrink: 0;
     border-radius: var(--radius-md);
-    background-size: cover;
-    background-position: center;
+    object-fit: cover;
     border: 1px solid rgba(255,255,255,0.05);
 }
 
@@ -682,10 +681,10 @@ body.light-mode .blog-card {
 
 .submit-btn {
     background: var(--accent);
-    color: white;
+    color: #111115; /* Improved Accessibility Contrast */
     padding: 0.75rem 1.5rem;
     border-radius: var(--radius-sm);
-    font-weight: 600;
+    font-weight: 700;
     align-self: flex-start;
     transition: var(--transition-fast);
 }

@@ -141,16 +141,29 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial Home/Category SEO
     updateHomeSEO(categoryParam);
     
-    // Cleanup Illumination Overlay for mobile/performance stability
+    // Critical Asset Discovery & Cleanup
     const overlay = document.getElementById('illumination-overlay');
     if (overlay) {
         overlay.addEventListener('animationend', () => overlay.remove());
-        // Fallback: Force remove after 5 seconds if animationend fails
         setTimeout(() => overlay.remove(), 5000);
     }
 
+    if (articleId) preloadArticleCover(articleId);
     trackView(); 
 });
+
+async function preloadArticleCover(id) {
+    try {
+        const { data: post } = await supabase.from('blogs').select('cover_image').eq('id', id).single();
+        if (post && post.cover_image) {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = 'image';
+            link.href = post.cover_image;
+            document.head.appendChild(link);
+        }
+    } catch (e) {}
+}
 
 window.onpopstate = function(event) {
     const articleIdFromPath = parseArticleIdFromLocation();
@@ -376,10 +389,10 @@ function renderHomeFeed() {
         card.onclick = () => fetchArticle(post.id);
         
         card.innerHTML = `
-            <div class="card-img" style="background-image: url('${post.cover_image}')"></div>
+            <img class="card-img" src="${post.cover_image}" alt="${post.title}" loading="lazy">
             <div class="card-content">
                 <span class="card-category">${post.category}</span>
-                <h3 class="card-title">${post.title}</h3>
+                <h2 class="card-title">${post.title}</h2>
                 <p class="card-excerpt">${post.excerpt}</p>
             </div>
         `;
