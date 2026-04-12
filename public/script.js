@@ -110,10 +110,10 @@ window.addEventListener('scroll', () => {
     }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     initTheme();
     renderSkeletons();
-    fetchAuthorProfile();
+    await fetchAuthorProfile();
     
     // Process URL parameters for deep-linking
     const urlParams = new URLSearchParams(window.location.search);
@@ -270,18 +270,33 @@ async function fetchAuthorProfile() {
 
         if (data && data.content) {
             globalAuthorProfile = JSON.parse(data.content);
-            
-            // Pre-fill the new footer author card
-            const footerCard = document.getElementById('footer-author-card');
-            if (footerCard) {
-                document.getElementById('footer-author-image').src = globalAuthorProfile.image_url || 'black_light_logo.png';
-                document.getElementById('footer-author-name').innerText = globalAuthorProfile.name || 'Author';
-                document.getElementById('footer-author-title').innerText = globalAuthorProfile.title || 'Author';
-                footerCard.style.display = 'flex';
-            }
+        } else {
+            // Fallback profile if not in DB
+            globalAuthorProfile = {
+                name: "The Black Light",
+                title: "Editor",
+                bio: "Professional analysis of international economics, global markets, and energy industry trends.",
+                image_url: "black_light_logo.png"
+            };
+        }
+        
+        // Pre-fill the new footer author card
+        const footerCard = document.getElementById('footer-author-card');
+        if (footerCard && globalAuthorProfile) {
+            document.getElementById('footer-author-image').src = globalAuthorProfile.image_url || 'black_light_logo.png';
+            document.getElementById('footer-author-name').innerText = globalAuthorProfile.name || 'Author';
+            document.getElementById('footer-author-title').innerText = globalAuthorProfile.title || 'Author';
+            footerCard.style.display = 'flex';
         }
     } catch (e) {
         console.error("Error fetching author profile:", e);
+        // Fallback profile on error
+        globalAuthorProfile = {
+            name: "The Black Light",
+            title: "Editor",
+            bio: "Professional analysis of international economics, global markets, and energy industry trends.",
+            image_url: "black_light_logo.png"
+        };
     }
 }
 
@@ -393,6 +408,7 @@ function renderHomeFeed() {
             <div class="card-content">
                 <span class="card-category">${post.category}</span>
                 <h2 class="card-title">${post.title}</h2>
+                <span style="display: block; font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-top: -0.5rem; margin-bottom: 0.8rem; letter-spacing: 0.5px;">By ${post.author || 'The Black Light'}</span>
                 <p class="card-excerpt">${post.excerpt}</p>
             </div>
         `;

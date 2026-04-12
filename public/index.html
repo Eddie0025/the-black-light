@@ -7,6 +7,12 @@
     <meta id="meta-desc" name="description" content="Deep-dive analysis on global macroeconomics, energy markets, and international policy. Illuminating the unseen patterns in global affairs.">
     <meta id="meta-keywords" name="keywords" content="blog, intelligence, macroeconomics, policy, energy, professional insights, global markets, geopolitics, economics, analysis">
     
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BlackLight">
+    
     <!-- OpenGraph / Social Preview -->
     <meta id="og-title" property="og:title" content="The Black Light | Professional Intelligence">
     <meta id="og-desc" property="og:description" content="Illuminating the unseen patterns in global macroeconomics and policy.">
@@ -294,5 +300,19 @@
     <div id="toast-container" class="toast-container"></div>
 
     <script src="script.js" defer></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, err => {
+              console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+      }
+    </script>
 </body>
 </html>
