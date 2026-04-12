@@ -273,15 +273,23 @@ async function fetchAuthorProfile() {
             globalAuthorProfile = typeof data.content === 'string'
                 ? JSON.parse(data.content)
                 : data.content;
+        } else {
+            // Clean, pristine fallback so the UI never breaks or disappears completely
+            globalAuthorProfile = {
+                name: "Aditya",
+                title: "Editor & Analyst",
+                bio: "Writing deep-dive intelligence reports on global macroeconomics, energy markets, and international policy.",
+                image_url: "black_light_logo.png"
+            };
+        }
             
-            // Pre-fill the footer author card
-            const footerCard = document.getElementById('footer-author-card');
-            if (footerCard && globalAuthorProfile) {
-                document.getElementById('footer-author-image').src = globalAuthorProfile.image_url || 'black_light_logo.png';
-                document.getElementById('footer-author-name').innerText = globalAuthorProfile.name || 'Author';
-                document.getElementById('footer-author-title').innerText = globalAuthorProfile.title || 'Author';
-                footerCard.style.display = 'flex';
-            }
+        // Pre-fill the footer author card
+        const footerCard = document.getElementById('footer-author-card');
+        if (footerCard && globalAuthorProfile) {
+            document.getElementById('footer-author-image').src = globalAuthorProfile.image_url || 'black_light_logo.png';
+            document.getElementById('footer-author-name').innerText = globalAuthorProfile.name || 'Author';
+            document.getElementById('footer-author-title').innerText = globalAuthorProfile.title || 'Author';
+            footerCard.style.display = 'flex';
         }
     } catch (e) {
         console.error("Error fetching author profile:", e);
