@@ -1116,7 +1116,8 @@ body.light-mode .glass-panel {
     height: 120px;
     border-radius: var(--radius-md);
     padding: 3px;
-    background: linear-gradient(135deg, var(--accent), transparent);
+    background: var(--accent);
+    box-shadow: 0 0 15px var(--accent-glow);
     margin-bottom: 1.5rem;
 }
 
