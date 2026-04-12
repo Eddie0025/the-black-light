@@ -612,11 +612,39 @@ async function fetchHubStats() {
         const { data: stats } = await supabase.from('analytics').select('*').order('view_date', { ascending: false }).limit(7);
         const { count: subCount } = await supabase.from('subscribers').select('*', { count: 'exact', head: true });
         
-        let totalViews = 0;
-        stats?.forEach(s => totalViews += s.views);
+        // Fetch all-time analytics for accurate engagement math
+        const { data: allStats } = await supabase.from('analytics').select('views');
+        let allTimeViews = 0;
+        allStats?.forEach(s => allTimeViews += s.views);
         
-        document.getElementById('stat-views').innerText = totalViews || 0;
+        // Fetch all likes
+        const { data: blogs } = await supabase.from('blogs').select('likes');
+        let totalLikes = 0;
+        blogs?.forEach(b => totalLikes += (b.likes || 0));
+        
+        // Fetch total comments
+        const { count: commentCount } = await supabase.from('comments').select('*', { count: 'exact', head: true });
+        
+        let totalViews7Days = 0;
+        stats?.forEach(s => totalViews7Days += s.views);
+        
+        document.getElementById('stat-views').innerText = totalViews7Days || 0;
         document.getElementById('stat-subs').innerText = subCount || 0;
+        
+        // Calculate Engagement Rate
+        let engagementRate = 0;
+        const totalEngagements = totalLikes + (commentCount || 0);
+        
+        if (allTimeViews > 0) {
+            engagementRate = ((totalEngagements / allTimeViews) * 100).toFixed(1);
+        } else if (totalEngagements > 0) {
+            engagementRate = 100; // Edge case: Engagements exist but views haven't sync'd
+        }
+        
+        const engEl = document.getElementById('stat-engagement');
+        if (engEl) {
+            engEl.innerText = `${engagementRate}%`;
+        }
         
         renderTrafficChart(stats || []);
     } catch (e) {
