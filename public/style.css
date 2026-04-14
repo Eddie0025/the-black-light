@@ -178,6 +178,8 @@ textarea#new-blog-content {
     resize: vertical;
     overflow-y: auto;
     background: rgba(255,255,255,0.02);
+}
+
 .rich-editor {
     font-family: 'Merriweather', serif;
     font-size: 1.2rem;
