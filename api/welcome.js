@@ -7,8 +7,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { record } = req.body;
+  const { record, type } = req.body;
   const email = record?.email;
+
+  // ONLY send welcome email on initial signup.
+  if (type !== 'INSERT') {
+    return res.status(200).json({ message: 'Welcome skipped: Not an INSERT event' });
+  }
 
   if (!email) {
     return res.status(400).json({ error: 'No email found in record' });
