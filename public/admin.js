@@ -130,6 +130,37 @@ function toggleWorkspaceSize() {
     autoResize(textarea);
 }
 
+function insertLink() {
+    const textarea = document.getElementById('new-blog-content');
+    if (!textarea) return;
+    
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    
+    let defaultText = selectedText || "link text";
+    
+    const url = prompt("Enter the URL for the link (e.g., https://example.com):", "https://");
+    if (!url || url === "https://") return;
+    
+    const linkText = prompt("Enter the text to display for the link:", defaultText);
+    if (!linkText) return;
+    
+    // Auto-formatting anchor tag to match the site's accent
+    const anchorTag = `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; text-underline-offset: 2px;">${linkText}</a>`;
+    
+    // Insert into textarea
+    textarea.value = textarea.value.substring(0, start) + anchorTag + textarea.value.substring(end);
+    
+    // Update cursor position and focus it
+    textarea.selectionStart = start + anchorTag.length;
+    textarea.selectionEnd = start + anchorTag.length;
+    textarea.focus();
+    
+    // Trigger auto-resize
+    if (typeof autoResize === 'function') autoResize(textarea);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initializeAdminAuth();
     initFileUploadListener();
