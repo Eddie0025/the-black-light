@@ -119,47 +119,37 @@ function bindPrivacyEditor() {
     }
 }
 
-function autoResize(textarea) {
-    textarea.style.height = 'auto';
-    textarea.style.height = textarea.scrollHeight + 'px';
+function formatDoc(cmd, value = null) {
+    document.execCommand(cmd, false, value);
+    const editor = document.getElementById('new-blog-editor');
+    if (editor) editor.focus();
 }
 
 function toggleWorkspaceSize() {
-    const textarea = document.getElementById('new-blog-content');
-    textarea.classList.toggle('compact-view');
-    autoResize(textarea);
+    const editor = document.getElementById('new-blog-editor');
+    if (editor) editor.classList.toggle('compact-view');
 }
 
 function insertLink() {
-    const textarea = document.getElementById('new-blog-content');
-    if (!textarea) return;
-    
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = textarea.value.substring(start, end);
-    
-    let defaultText = selectedText || "link text";
-    
     const url = prompt("Enter the URL for the link (e.g., https://example.com):", "https://");
     if (!url || url === "https://") return;
     
-    const linkText = prompt("Enter the text to display for the link:", defaultText);
-    if (!linkText) return;
+    // In a rich editor, we use execCommand to turn the selected text into a link
+    document.execCommand('createLink', false, url);
     
-    // Auto-formatting anchor tag to match the site's accent
-    const anchorTag = `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; text-underline-offset: 2px;">${linkText}</a>`;
-    
-    // Insert into textarea
-    textarea.value = textarea.value.substring(0, start) + anchorTag + textarea.value.substring(end);
-    
-    // Update cursor position and focus it
-    textarea.selectionStart = start + anchorTag.length;
-    textarea.selectionEnd = start + anchorTag.length;
-    textarea.focus();
-    
-    // Trigger auto-resize
-    if (typeof autoResize === 'function') autoResize(textarea);
+    // Select all links and style them to match our theme if they don't have styles
+    const links = document.getElementById('new-blog-editor').getElementsByTagName('a');
+    for (let link of links) {
+        if (!link.hasAttribute('target')) {
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
+            link.style.color = 'var(--accent)';
+            link.style.textDecoration = 'underline';
+            link.style.textUnderlineOffset = '2px';
+        }
+    }
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeAdminAuth();
@@ -325,7 +315,7 @@ function handleDocxImport(file, inputEl) {
             // Clean up empty paragraphs but preserve line breaks as spacing
             html = html.replace(/<p><\/p>/g, '<br>');
             
-            document.getElementById('new-blog-content').value = html;
+            document.getElementById('new-blog-editor').innerHTML = html;
             showToast("Word Document imported successfully!");
             inputEl.value = '';
         })
@@ -418,7 +408,7 @@ async function handlePdfImport(file, inputEl) {
             }
         }
         
-        document.getElementById('new-blog-content').value = fullHtml.trim();
+        document.getElementById('new-blog-editor').innerHTML = fullHtml.trim();
         showToast(`PDF imported successfully! (${pdf.numPages} page${pdf.numPages > 1 ? 's' : ''} extracted)`);
         inputEl.value = '';
     } catch (err) {
@@ -881,8 +871,8 @@ async function editHubArticle(id) {
         
         document.getElementById('new-blog-author').value = blog.author;
         document.getElementById('new-blog-image').value = blog.cover_image;
-        const editorTextarea = document.getElementById('new-blog-content');
-        editorTextarea.value = blog.content;
+        const editor = document.getElementById('new-blog-editor');
+        editor.innerHTML = blog.content;
         document.getElementById('seo-title').value = blog.seo_title || '';
         document.getElementById('seo-description').value = blog.meta_description || '';
         document.getElementById('seo-canonical-preview').value = blog.canonical_override_url || buildCanonicalUrl(id, blog.title);
@@ -893,9 +883,6 @@ async function editHubArticle(id) {
         updateSeoCounters();
         refreshSeoPreview();
         switchEditorTab('content');
-        
-        // Trigger auto-resize after loading content
-        autoResize(editorTextarea);
         
         document.getElementById('publish-btn').innerText = "Update Intelligence Report";
         document.getElementById('cancel-edit-btn').style.display = 'block';
@@ -919,13 +906,12 @@ function cancelEditing() {
     document.getElementById('seo-canonical-override').value = '';
     switchEditorTab('content');
     canonicalUserEdited = false;
-    updateSeoCounters();
     refreshSeoPreview();
     
-    // Reset textarea height
-    const textarea = document.getElementById('new-blog-content');
-    if (textarea) {
-        textarea.style.height = 'auto';
+    // Reset editor
+    const editor = document.getElementById('new-blog-editor');
+    if (editor) {
+        editor.innerHTML = '';
     }
 }
 
@@ -1003,7 +989,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     const author = document.getElementById('new-blog-author').value;
     let cover_image = document.getElementById('new-blog-image').value;
     const fileInput = document.getElementById('new-blog-file');
-    let content = document.getElementById('new-blog-content').value;
+    let content = document.getElementById('new-blog-editor').innerHTML;
     const seoTitle = document.getElementById('seo-title').value.trim();
     const metaDescription = document.getElementById('seo-description').value.trim();
     

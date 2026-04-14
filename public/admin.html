@@ -162,13 +162,15 @@
                                     <label style="display: flex; justify-content: space-between; align-items: center;">
                                         <span>Report Content (HTML allowed)</span>
                                         <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                            <button type="button" class="nav-btn" onclick="formatDoc('bold')" title="Bold" style="width: auto; padding: 0.2rem 0.6rem; font-weight: 800;">B</button>
+                                            <button type="button" class="nav-btn" onclick="formatDoc('italic')" title="Italic" style="width: auto; padding: 0.2rem 0.6rem; font-style: italic;">I</button>
                                             <button type="button" class="nav-btn" onclick="insertLink()" title="Highlight text and click to insert a link" style="width: auto; padding: 0.2rem 0.6rem; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); font-size: 0.8rem; background: rgba(var(--accent-rgb), 0.1); color: var(--accent);">🔗 Insert Link</button>
                                             <button type="button" class="nav-btn" onclick="toggleWorkspaceSize()" style="width: auto; padding: 0.2rem 0.6rem; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); font-size: 0.8rem;">📐 Compact / Full</button>
                                             <input type="file" id="docx-upload" accept=".docx,.pdf" style="display: none;"/>
                                             <button type="button" class="nav-btn" onclick="document.getElementById('docx-upload').click()" style="width: auto; padding: 0.2rem 0.6rem; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); font-size: 0.8rem;">📄 Import Document (.docx / .pdf)</button>
                                         </div>
                                     </label>
-                                    <textarea id="new-blog-content" rows="10" placeholder="Analyze the unseen..." required oninput="autoResize(this)"></textarea>
+                                    <div id="new-blog-editor" contenteditable="true" data-placeholder="Analyze the unseen..." class="rich-editor compact-view"></div>
                                 </div>
                                 </div>
                                 <div id="editor-tab-seo" class="editor-tab-panel">

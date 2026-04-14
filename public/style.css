@@ -178,16 +178,49 @@ textarea#new-blog-content {
     resize: vertical;
     overflow-y: auto;
     background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.1);
+.rich-editor {
     font-family: 'Merriweather', serif;
-    font-size: 1.1rem;
-    line-height: 1.8;
+    font-size: 1.2rem;
+    line-height: 1.9;
     color: #e2e8f0;
+    background: var(--bg-surface-elevated);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 1.5rem;
+    border-radius: var(--radius-sm);
+    min-height: 400px;
+    width: 100%;
+    outline: none;
+    transition: var(--transition-fast);
+    overflow-y: auto;
+    text-align: left;
 }
 
-textarea#new-blog-content.compact-view {
-    min-height: 120px;
-    max-height: 250px;
+.rich-editor:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.rich-editor[contenteditable]:empty:before {
+    content: attr(data-placeholder);
+    color: var(--text-secondary);
+    opacity: 0.5;
+    font-style: italic;
+    cursor: text;
+}
+
+.rich-editor.compact-view {
+    min-height: 150px;
+    max-height: 350px;
+}
+
+.rich-editor p {
+    margin-bottom: 1.5rem;
+}
+
+.rich-editor a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }
 
 input:focus, textarea:focus {
