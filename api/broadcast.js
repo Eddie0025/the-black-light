@@ -42,9 +42,14 @@ export default async function handler(req, res) {
       return res.status(200).json({ message: 'No subscribers to notify' });
     }
 
-    // 2. Blast the intelligence alert (Individual sends for privacy and unsubscribe links)
-    const results = await Promise.all(subscribers.map(sub => 
-      resend.emails.send({
+    // 2. Blast the intelligence alert (use Batch API to avoid 429 Rate Limits)
+    const BATCH_SIZE = 100; // Resend maximum batch size
+    const results = [];
+    
+    for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
+      const chunk = subscribers.slice(i, i + BATCH_SIZE);
+      
+      const emailBatch = chunk.map(sub => ({
         from: 'The Black Light <briefings@www.theblacklight.blog>',
         to: [sub.email],
         reply_to: 'theblacklighttt@gmail.com',
@@ -74,10 +79,13 @@ export default async function handler(req, res) {
             </div>
           </div>
         `,
-      })
-    ));
+      }));
 
-    return res.status(200).json({ success: true, count: results.length });
+      const chunkResult = await resend.batch.send(emailBatch);
+      results.push(chunkResult);
+    }
+
+    return res.status(200).json({ success: true, count: subscribers.length, batches: results.length });
 
   } catch (error) {
     console.error(error);
