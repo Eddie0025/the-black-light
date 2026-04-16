@@ -31,11 +31,16 @@ function buildArticleUrl(post) {
     const overrideUrl = (post?.canonical_override_url || '').trim();
     if (overrideUrl) {
         if (/^https?:\/\//i.test(overrideUrl)) return overrideUrl;
-        if (overrideUrl.startsWith('/')) return `${SITE_ORIGIN}${overrideUrl}`;
-        return `https://${overrideUrl.replace(/^\/+/, '')}`;
+        // Strip trailing slash from path overrides for consistency
+        const path = overrideUrl.startsWith('/')
+            ? overrideUrl.replace(/\/+$/, '')
+            : '/' + overrideUrl.replace(/^\/+/, '').replace(/\/+$/, '');
+        return `${SITE_ORIGIN}${path}`;
     }
 
-    return `${SITE_ORIGIN}${buildArticlePath(post?.id, post?.title)}`;
+    // Article canonical: no trailing slash, matches sitemap exactly
+    const path = buildArticlePath(post?.id, post?.title).replace(/\/+$/, '');
+    return `${SITE_ORIGIN}${path}`;
 }
 
 function getSeoTitle(post) {
@@ -178,6 +183,9 @@ window.onpopstate = function(event) {
         if (view === 'article' && id) {
             fetchArticle(id, false);
         } else if (view === 'home') {
+            // Remove article pre-render style when navigating back to home
+            const preStyle = document.getElementById('seo-prerender-style');
+            if (preStyle) preStyle.remove();
             navigateTo('home', false);
             fetchBlogs(category || null);
         } else {
@@ -185,6 +193,8 @@ window.onpopstate = function(event) {
         }
     } else {
         // Fallback to home if no state
+        const preStyle = document.getElementById('seo-prerender-style');
+        if (preStyle) preStyle.remove();
         navigateTo('home', false);
         fetchBlogs();
     }
@@ -373,6 +383,9 @@ function loadCategory(category) {
 }
 
 function loadHome() {
+    // Remove any article pre-render style so home content is fully visible
+    const preStyle = document.getElementById('seo-prerender-style');
+    if (preStyle) preStyle.remove();
     navigateTo('home');
     fetchBlogs(null);
 }
@@ -884,9 +897,13 @@ function updateSEO(post) {
     setMeta('twitter-image', 'content', imageUrl);
     setMeta('twitter-card', 'content', 'summary_large_image');
 
-    // Canonical
+    // Canonical — ensure it matches the sitemap URL exactly (no trailing slash)
     const canonical = document.getElementById('canonical-url');
     if (canonical) canonical.setAttribute('href', canonicalUrl);
+
+    // Remove the pre-render style: real JS content has now loaded
+    const preStyle = document.getElementById('seo-prerender-style');
+    if (preStyle) preStyle.remove();
 
     updateArticleSchema(post, canonicalUrl, description, seoTitle);
     updateBreadcrumbSchema(post, canonicalUrl);
@@ -899,7 +916,8 @@ function updateHomeSEO(category = null) {
     
     let title = baseTitle;
     let desc = baseDesc;
-    let url = SITE_ORIGIN + "/";
+    // Home canonical matches sitemap exactly: no trailing slash on origin
+    let url = SITE_ORIGIN;
 
     if (category) {
         title = `${category} Intelligence | The Black Light`;
@@ -924,10 +942,11 @@ function updateHomeSEO(category = null) {
     setMeta('og-url', 'content', url);
     setMeta('og-type', 'content', 'website');
 
-    // Reset Twitter
+    // Twitter
     setMeta('twitter-title', 'content', title);
     setMeta('twitter-desc', 'content', desc);
     setMeta('twitter-image', 'content', defaultImage);
+    setMeta('twitter-card', 'content', 'summary_large_image');
 
     // Canonical
     const canonical = document.getElementById('canonical-url');
@@ -936,7 +955,7 @@ function updateHomeSEO(category = null) {
     // Dynamic Home/Collection Schema
     updateCollectionSchema(category, url, desc, title);
 
-    // Clean up schemas for home page
+    // Clean up article-specific schemas
     clearArticleSchema();
     clearBreadcrumbSchema();
 }
@@ -964,9 +983,4 @@ function updateCollectionSchema(category, url, description, title) {
     schemaScript.textContent = JSON.stringify(schema);
 }
 
-// Hook reset into navigation - Fix: Properly spread arguments to avoid losing data like article ID
-const originalNavigateTo = navigateTo;
-navigateTo = function(...args) {
-    if (args[0] === 'home') updateHomeSEO(activeCategory);
-    originalNavigateTo(...args);
-};
+// Home SEO is now called directly from loadHome() and fetchBlogs() — no override needed.

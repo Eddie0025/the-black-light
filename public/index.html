@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Black Light | Professional Intelligence & Insights</title>
+    <title>The Black Light</title>
     <meta id="meta-desc" name="description" content="Deep-dive analysis on global macroeconomics, energy markets, and international policy. Illuminating the unseen patterns in global affairs.">
     <meta id="meta-keywords" name="keywords" content="blog, intelligence, macroeconomics, policy, energy, professional insights, global markets, geopolitics, economics, analysis">
     
@@ -37,17 +37,58 @@
     
     <link id="canonical-url" rel="canonical">
     <script>
-        /* Instant SEO Initialization: Prevents Google from misidentifying articles as home page duplicates */
+        /* Instant SEO Initialization — runs synchronously before first paint.
+           Prevents Google from misidentifying article pages as home page duplicates
+           by immediately setting the correct canonical, title, and hiding home-view content. */
         (function() {
-            const origin = 'https://www.theblacklight.blog';
-            const pathname = window.location.pathname;
-            const search = window.location.search;
-            // Immediate fallback to current URL to prevent "Home Page" canonicalization
-            const currentUrl = origin + (pathname === '/' ? '' : pathname) + search;
-            const ogUrl = document.getElementById('og-url');
-            const canonicalUrl = document.getElementById('canonical-url');
-            if (ogUrl) ogUrl.setAttribute('content', currentUrl);
-            if (canonicalUrl) canonicalUrl.setAttribute('href', currentUrl);
+            var origin = 'https://www.theblacklight.blog';
+            var pathname = window.location.pathname;
+            var search = window.location.search;
+
+            // Strip trailing slash for consistency (except root)
+            var cleanPath = pathname.replace(/\/+$/, '') || '/';
+
+            // Detect article pages: /article/<id>-<slug>
+            var isArticle = /^\/article\/\d+/.test(cleanPath);
+
+            // Build canonical URL — never append search params to article URLs
+            var canonicalHref;
+            if (isArticle) {
+                canonicalHref = origin + cleanPath;
+            } else if (cleanPath === '/') {
+                canonicalHref = search ? origin + '/' + search : origin + '/';
+            } else {
+                canonicalHref = origin + cleanPath + search;
+            }
+
+            // Set canonical link
+            var canonicalEl = document.getElementById('canonical-url');
+            if (canonicalEl) canonicalEl.setAttribute('href', canonicalHref);
+
+            // Set og:url
+            var ogUrlEl = document.getElementById('og-url');
+            if (ogUrlEl) ogUrlEl.setAttribute('content', canonicalHref);
+
+            // For article pages: immediately signal to Google this is NOT the home page
+            if (isArticle) {
+                // Set a neutral title immediately (JS will replace this with the real article title)
+                document.title = 'Loading... | The Black Light';
+
+                // Inject CSS to immediately hide the home-view hero and grid,
+                // and show the article-view shell. This prevents Googlebot from
+                // seeing "Illuminating the unseen" as the page content.
+                var style = document.createElement('style');
+                style.id = 'seo-prerender-style';
+                style.textContent = [
+                    '#home-view { display: none !important; }',
+                    '#article-view { display: block !important; }'
+                ].join(' ');
+                document.head.appendChild(style);
+
+                // Also update og:type to article immediately
+                var ogTypeEl = document.getElementById('og-type');
+                if (ogTypeEl) ogTypeEl.setAttribute('content', 'article');
+            }
         })();
     </script>
     
