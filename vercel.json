@@ -16,8 +16,7 @@
   "routes": [
     { "src": "/sitemap.xml", "dest": "/api/sitemap" },
     { "src": "/admin", "dest": "/admin.html" },
-    { "src": "/article/(.*)", "dest": "/api/article?slug=$1" },
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/" }
+    { "src": "/article/(.*)", "dest": "/api/article?slug=$1" }
   ]
 }
