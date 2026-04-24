@@ -418,10 +418,17 @@ body.light-mode .category-chip {
     border-bottom: 1px solid rgba(255,255,255,0.05);
     padding-bottom: 3rem;
     transition: var(--transition-smooth);
+    display: block;
+}
+
+.card-link {
     display: flex;
     flex-direction: row;
     gap: 2.5rem;
     align-items: center;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
 }
 
 .blog-card:hover {

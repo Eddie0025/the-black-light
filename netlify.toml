@@ -20,6 +20,12 @@
   status = 200
 
 [[redirects]]
+  from = "/article/*"
+  to = "/.netlify/functions/article?slug=:splat"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200

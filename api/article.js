@@ -32,6 +32,15 @@ export default async function handler(req, res) {
                 .eq('id', id)
                 .single();
                 
+            if (error || !post) {
+                const indexPath = path.join(process.cwd(), 'public', 'index.html');
+                let html = fs.readFileSync(indexPath, 'utf8');
+                html = html.replace('</head>', '    <meta name="robots" content="noindex">\n</head>');
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=3600');
+                return res.status(404).send(html);
+            }
+                
             if (!error && post) {
                 // Determine title
                 title = post.seo_title?.trim() || post.title || title;

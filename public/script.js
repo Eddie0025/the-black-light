@@ -410,16 +410,17 @@ function renderHomeFeed() {
         const card = document.createElement('div');
         card.className = 'blog-card reveal';
         card.style.transitionDelay = `${index * 0.1}s`;
-        card.onclick = () => fetchArticle(post.id);
-        
+        const articlePath = buildArticlePath(post.id, post.title);
         card.innerHTML = `
-            <img class="card-img" src="${post.cover_image}" alt="${post.title}" loading="lazy">
-            <div class="card-content">
-                <span class="card-category">${post.category}</span>
-                <h2 class="card-title">${post.title}</h2>
-                <span style="display: block; font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-top: -0.5rem; margin-bottom: 0.8rem; letter-spacing: 0.5px;">By ${post.author || 'The Black Light'}</span>
-                <p class="card-excerpt">${post.excerpt}</p>
-            </div>
+            <a href="${articlePath}" class="card-link" onclick="event.preventDefault(); fetchArticle(${post.id});">
+                <img class="card-img" src="${post.cover_image}" alt="${post.title}" loading="lazy">
+                <div class="card-content">
+                    <span class="card-category">${post.category}</span>
+                    <h2 class="card-title">${post.title}</h2>
+                    <span style="display: block; font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-top: -0.5rem; margin-bottom: 0.8rem; letter-spacing: 0.5px;">By ${post.author || 'The Black Light'}</span>
+                    <p class="card-excerpt">${post.excerpt}</p>
+                </div>
+            </a>
         `;
         
         grid.appendChild(card);
