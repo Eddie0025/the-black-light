@@ -703,6 +703,23 @@ async function handleSubscribe(e) {
         }
 
         // 2. Supabase Insertion
+       // Unregister any existing Service Workers to avoid stale caching
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          for (const reg of regs) {
+            reg.unregister();
+          }
+        }).catch(err => console.error('SW unregister error:', err));
+        // Then register the fresh Service Worker
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, err => {
+              console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+      }
         const { error } = await supabase
             .from('subscribers')
             .insert([{ email: email }]);

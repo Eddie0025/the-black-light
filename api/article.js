@@ -118,7 +118,7 @@ export default async function handler(req, res) {
         html = html.replace('</head>', `${preRenderCss}\n</head>`);
 
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=3600');
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
         res.status(200).send(html);
     } catch (e) {
         console.error('Error serving article HTML:', e);
