@@ -1888,3 +1888,27 @@ body.light-mode input, body.light-mode textarea, body.light-mode .blog-card, bod
         background: rgba(0,0,0,0.5);
     }
 }
+
+/* ================== MOBILE CARD LAYOUT ================== */
+@media (max-width: 600px) {
+  .card-link {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .card-img {
+    width: 100%;
+    height: auto;
+    max-height: 250px;
+    object-fit: cover;
+  }
+  .card-title {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  .card-excerpt {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+}
+

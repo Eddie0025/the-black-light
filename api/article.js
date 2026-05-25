@@ -21,9 +21,12 @@ export default async function handler(req, res) {
     if (match) {
         const id = match[1];
         try {
+            // Use the Service Role key for server‑side rendering to guarantee full data access.
+            // This key must be set in the Vercel/GitHub Actions environment variables.
+            // Falling back to the anon key is unsafe for SEO injection because the anon role may lack SELECT rights.
             const supabase = createClient(
                 SUPABASE_URL,
-                process.env.SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY
+                process.env.SUPABASE_SERVICE_ROLE_KEY
             );
             
             const { data: post, error } = await supabase
