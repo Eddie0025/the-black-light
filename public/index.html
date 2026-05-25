@@ -52,6 +52,15 @@
     <script src="supabase-client.js" defer></script>
 </head>
 <body>
+    <!-- Theme Initialization Script -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        })();
+    </script>
     <!-- Illumination Animation -->
     <div id="illumination-overlay"></div>
 

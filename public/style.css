@@ -110,8 +110,8 @@ body.light-mode {
     --bg-surface: #ffffff;
     --bg-surface-elevated: #f0f0f0;
     
-    --text-primary: #111111;
-    --text-secondary: #555555;
+    --text-primary: #000000;
+    --text-secondary: #1a1a1a;
     
     --accent: #6d28d9;
     --accent-glow: rgba(109, 40, 217, 0.2);
@@ -124,9 +124,107 @@ body.light-mode {
 }
 
 body.light-mode .hero h2 {
-    background: linear-gradient(135deg, #111 0%, #666 100%);
+    background: #000000;
     -webkit-background-clip: text;
     background-clip: text;
+}
+
+/* Light mode specific element styling for perfect readability and premium look */
+body.light-mode .navbar {
+    background: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .navbar.scrolled {
+    background: rgba(255, 255, 255, 0.85);
+}
+
+body.light-mode .close-modal {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--text-secondary);
+}
+
+body.light-mode .close-modal:hover {
+    background: var(--bg-surface-elevated);
+    color: var(--text-primary);
+}
+
+body.light-mode .dossier-aside {
+    background: rgba(0, 0, 0, 0.03);
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .divider::before,
+body.light-mode .divider::after {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .social-btn {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .editor-tabs {
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .editor-tab-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+body.light-mode .seo-info-card {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .interaction-bar {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .action-btn,
+body.light-mode .share-btn {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .share-option-btn {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .share-option-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .sidebar-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+}
+
+body.light-mode .dashboard-main {
+    background: rgba(0, 0, 0, 0.01);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .stat-card {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .admin-table th,
+body.light-mode .admin-table td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .sidebar-overlay {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 768px) {
+    body.light-mode .dossier-aside {
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
 }
 
 * {
@@ -184,7 +282,7 @@ textarea#new-blog-content {
     font-family: 'Merriweather', serif;
     font-size: 1.2rem;
     line-height: 1.9;
-    color: #e2e8f0;
+    color: var(--text-primary);
     background: var(--bg-surface-elevated);
     border: 1px solid rgba(255,255,255,0.08);
     padding: 1.5rem;
@@ -398,7 +496,7 @@ input:focus, textarea:focus {
 }
 
 body.light-mode .category-chip {
-    color: #4b5563;
+    color: var(--text-secondary);
 }
 
 .blog-grid.list-layout {
@@ -583,7 +681,7 @@ body.light-mode .blog-card {
 .article-content {
     font-family: 'Merriweather', serif;
     font-size: 1.2rem;
-    color: #e2e8f0;
+    color: var(--text-primary);
     line-height: 1.9;
 }
 

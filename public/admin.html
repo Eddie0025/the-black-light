@@ -29,6 +29,15 @@
     </style>
 </head>
 <body>
+    <!-- Theme Initialization Script -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        })();
+    </script>
 
     <!-- App Container -->
     <main class="app-container" style="margin-top: 2rem; max-width: 100%; padding: 0 2rem;">
