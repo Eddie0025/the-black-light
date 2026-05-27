@@ -47,7 +47,9 @@ export default async function handler(req, res) {
             if (!error && post) {
                 // Determine title
                 title = post.seo_title?.trim() || post.title || title;
-                title = title + ' | The Black Light';
+                if (!title.includes('The Black Light')) {
+                    title = title + ' | The Black Light';
+                }
                 
                 // Determine description
                 const explicitDesc = post.meta_description?.trim();
