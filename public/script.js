@@ -382,11 +382,37 @@ function loadCategory(category) {
     fetchBlogs(category);
 }
 
+let defaultMetaDescription = null;
+let defaultCanonicalUrl = null;
+
+function initDefaultSEO() {
+    const meta = document.getElementById('meta-desc');
+    if (meta) defaultMetaDescription = meta.getAttribute('content');
+    const canonical = document.getElementById('canonical-url');
+    if (canonical) defaultCanonicalUrl = canonical.getAttribute('href');
+}
+
+function resetHomeSEO() {
+    if (defaultMetaDescription !== null) {
+        const meta = document.getElementById('meta-desc');
+        if (meta) meta.setAttribute('content', defaultMetaDescription);
+    }
+    if (defaultCanonicalUrl !== null) {
+        const canonical = document.getElementById('canonical-url');
+        if (canonical) canonical.setAttribute('href', defaultCanonicalUrl);
+    }
+    document.title = 'The Black Light | Professional Intelligence';
+}
+
 function loadHome() {
+    // Ensure default SEO values are captured (run once on first load)
+    if (defaultMetaDescription === null) initDefaultSEO();
     // Remove any article pre-render style so home content is fully visible
     const preStyle = document.getElementById('seo-prerender-style');
     if (preStyle) preStyle.remove();
     navigateTo('home');
+    // Reset meta description and canonical URL to site defaults
+    resetHomeSEO();
     fetchBlogs(null);
 }
 
